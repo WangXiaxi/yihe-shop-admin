@@ -67,7 +67,7 @@
 
 <script>
 import Cookies from 'js-cookie'
-import md5 from 'js-md5'
+// import md5 from 'js-md5'
 
 export default {
   name: 'Login',
@@ -132,9 +132,10 @@ export default {
           Cookies.remove('password')
           Cookies.remove('rememberMe')
         }
-        const loginForm = Object.assign({}, this.loginForm, {
-          password: md5(password)
-        })
+        const loginForm = {
+          password,
+          admin_name: username
+        }
         this.$store
           .dispatch('Login', loginForm)
           .then(() => {

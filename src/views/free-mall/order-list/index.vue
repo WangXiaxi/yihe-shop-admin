@@ -251,7 +251,7 @@
 <script>
 import enum_hwError_obj from '@/enumeration/hw-error'
 import { cloneDeep } from 'lodash'
-import { list } from '@/api/hw-error'
+import { list } from '@/api/login'
 import pagination from '@/mixins/pagination'
 
 const baseQuery = {

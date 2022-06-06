@@ -11,11 +11,7 @@ const name = process.env.VUE_APP_TITLE // 网页标题
 
 const port = process.env.port || process.env.npm_config_port || 80 // 端口
 const assetsDir = 'static'
-const target = 'http://10.207.20.233:8083' // 测试 admin 123456
-// const target = 'http://10.207.20.233:8188' // 测试 admin 123456
-// const target = 'http://10.23.5.60:8084' // 大伟
-// const target = 'http://10.23.8.10:8083' // 欢总
-// const target = 'http://10.240.20.73' // 正式 admin sf@123
+const target = 'http://47.114.101.163' // 测试 admin 111111
 
 // vue.config.js 配置说明
 // 官方vue.config.js 参考文档 https://cli.vuejs.org/zh/config/#css-loaderoptions

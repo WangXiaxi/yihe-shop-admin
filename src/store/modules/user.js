@@ -37,9 +37,8 @@ const user = {
     },
     // 登录
     Login({ commit }, userInfo) {
-      const { username, password } = userInfo
       return new Promise((resolve, reject) => {
-        login({ userName: username, password }).then(res => {
+        login(userInfo).then(res => {
           util.setToken(res.data)
           commit('SET_TOKEN', res.data)
           resolve()
