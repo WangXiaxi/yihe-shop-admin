@@ -1,4 +1,4 @@
-import { login } from '@/api/login'
+import { login, getInfo } from '@/api/login'
 import util from '@/utils/auth'
 import Cookies from 'js-cookie'
 
@@ -8,7 +8,8 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    userInfo: {}
   },
 
   mutations: {
@@ -26,6 +27,9 @@ const user = {
     },
     SET_PERMISSIONS: (state, permissions) => {
       state.permissions = permissions
+    },
+    SET_USERINFO: (state, userInfo) => {
+      state.userInfo = userInfo
     }
   },
 
@@ -39,8 +43,8 @@ const user = {
     Login({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(res => {
-          util.setToken(res.data)
-          commit('SET_TOKEN', res.data)
+          util.setToken(res.adminToken)
+          commit('SET_TOKEN', res.adminToken)
           resolve()
         }).catch(error => {
           reject(error)
@@ -50,19 +54,21 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        // getInfo().then(res => {
-        const user = { avatar: localStorage.getItem('hw-admin-avatar') } // res.user
-        const permissions = ['admin:public']
-        const avatar = !user.avatar ? require('@/assets/images/boy.png') : user.avatar
-        // if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-        //   commit('SET_ROLES', res.roles)
-        commit('SET_PERMISSIONS', permissions)
-        // } else {
-        commit('SET_ROLES', ['ROLE_DEFAULT'])
-        // }
-        commit('SET_NAME', Cookies.get('username'))
-        commit('SET_AVATAR', avatar)
-        resolve('success')
+       getInfo().then(res => {
+          commit('SET_USERINFO', res)
+          commit('SET_NAME', res.admin_name)
+          const user = { avatar: localStorage.getItem('hw-admin-avatar') } // res.user
+          const permissions = ['admin:public']
+          const avatar = !user.avatar ? require('@/assets/images/boy.png') : user.avatar
+          // if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+          //   commit('SET_ROLES', res.roles)
+          commit('SET_PERMISSIONS', permissions)
+          // } else {
+          commit('SET_ROLES', ['ROLE_DEFAULT'])
+          // }
+          commit('SET_AVATAR', avatar)
+          resolve('success')
+        })
       })
     },
 

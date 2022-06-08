@@ -60,8 +60,7 @@
       </el-form-item>
     </el-form>
     <!--  底部  -->
-    <div class="el-login-footer">
-    </div>
+    <div class="el-login-footer"></div>
   </div>
 </template>
 
@@ -139,6 +138,11 @@ export default {
         this.$store
           .dispatch('Login', loginForm)
           .then(() => {
+            this.$message({
+              showClose: true,
+              message: '登录成功！',
+              type: 'success'
+            })
             this.$router.push({ path: this.redirect || '/' }).catch(() => {})
           })
           .catch(() => {

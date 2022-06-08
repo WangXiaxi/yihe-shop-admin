@@ -136,11 +136,13 @@ export default {
   mounted() {},
   methods: {
     handleEdit(data) {
+      this.$router.push(`/user-center/user-list/page/edit/${data.id}`)
     },
     handleUpdate(isEdit) {
       isEdit ? this.getList() : this.handleFilter()
     },
     handleAdd() {
+      this.$router.push('/user-center/user-list/page/add')
     },
     handleReset() {
       Object.assign(this.listQuery, cloneDeep(baseQuery))

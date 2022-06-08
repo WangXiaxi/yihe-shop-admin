@@ -6,8 +6,8 @@
       :readonly="disabled"
       :disabled="disabled"
       :value="value"
-      :maxlength="isMaxLength"
-      :placeholder="isPlaceholder"
+      :maxlength="maxlength"
+      :placeholder="placeholder"
       @keyup="onKeyup"
       @blur="onBlur"
       @keydown="onKeydown($event)"
@@ -30,7 +30,7 @@ export default {
       type: [String, Number],
       default: ''
     },
-    isPlaceholder: {
+    placeholder: {
       type: String,
       default: ''
     },
@@ -58,7 +58,7 @@ export default {
       type: Number,
       default: 6
     },
-    isMaxLength: {
+    maxlength: {
       type: Number,
       default: 16
     }

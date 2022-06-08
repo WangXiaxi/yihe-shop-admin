@@ -26,14 +26,8 @@
         >清空</el-button>
       </div>
       <div class="button-operation admin-mt-10">
-        <el-button type="primary" plain @click="handleAdd">添加规格</el-button>
-        <el-button
-          :loading="btnLoading"
-          type="primary"
-          plain
-          @click="handleDele()"
-        >批量删除</el-button>
-        <el-button type="primary" plain @click="handleReturn">回车站</el-button>
+        <el-button type="primary" plain @click="handleAdd">还原</el-button>
+        <el-button type="primary" plain @click="handleAdd">批量删除</el-button>
       </div>
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
@@ -58,6 +52,7 @@
             :width="item.realWidth"
           >
             <template slot-scope="{ row }">
+
               <span>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
@@ -68,13 +63,12 @@
                   icon="el-icon-edit"
                   type="text"
                   :loading="row.btnLoading"
-                  @click="handleEdit(row)"
+                  @click="handleEdit([row])"
                 >编辑</el-button>
                 <el-button
-                  :loading="row.btnLoading"
                   icon="el-icon-delete"
                   type="text"
-                  @click="handleDele(row, 'single')"
+                  @click="handleEdit([row])"
                 >删除</el-button>
               </div>
             </template>
@@ -97,7 +91,7 @@
 <script>
 import { cloneDeep } from 'lodash'
 import pagination from '@/mixins/pagination'
-import { list, dele } from '@/api/sys-manage/spec-list'
+import { list } from '@/api/sys-manage/spec-list'
 import AddDialog from './components/add-dialog.vue'
 
 const baseQuery = {
@@ -105,7 +99,7 @@ const baseQuery = {
 }
 
 export default {
-  name: 'SysManageSpec',
+  name: 'SysManageReturn',
   components: { AddDialog },
   mixins: [pagination],
   props: {},
@@ -114,7 +108,7 @@ export default {
       listQuery: cloneDeep(baseQuery),
       tableListText: [
         { name: 'name', text: '规格名称', width: '120' },
-        { name: 'valueDesc', text: '规格数据', width: '300' },
+        { name: 'value', text: '规格数据', width: '300' },
         { name: 'sort', text: '排序', width: '100' },
         { name: 'note', text: '说明', width: '200' }
       ],
@@ -128,36 +122,6 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    handleDele(item, type = 'more') {
-      const ids = (type === 'single' ? [item] : this.selectRowData)
-        .map((c) => c.id)
-        .join(',')
-      console.log(ids)
-      const baseObj = { more: this, single: item }[type]
-      const content = '确定删除当前选中规格吗？'
-      this.$confirm(content, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          baseObj.btnLoading = true
-          dele({ id: ids })
-            .then((res) => {
-              baseObj.btnLoading = false
-              this.$message({
-                showClose: true,
-                message: `删除成功！`,
-                type: 'success'
-              })
-              this.handleFilter()
-            })
-            .catch(() => {
-              baseObj.btnLoading = false
-            })
-        })
-        .catch(() => {})
-    },
     handleEdit(data) {
       Object.assign(this.addDialog, {
         visible: true,
@@ -178,14 +142,10 @@ export default {
       Object.assign(this.listQuery, cloneDeep(baseQuery))
       this.handleFilter()
     },
-    handleReturn() {
+handleReturn() {
       this.$router.push('/sys-manage/spec-list/page/return')
-    },
+},
     handleData(item) {
-      item.btnLoading = false
-      item.valueDesc = Object.keys(JSON.parse(item.value))
-        .map((c) => `[${c}]`)
-        .join(',')
       return item
     },
     getList() {
@@ -219,8 +179,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .el-input--small .el-input__inner {
-  height: 30px;
-  line-height: 30px;
+ ::v-deep .el-input--small .el-input__inner {
+ height: 30px;
+ line-height: 30px;
 }
 </style>

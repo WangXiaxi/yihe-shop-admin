@@ -16,38 +16,48 @@
       ref="dataForm"
       v-loading="pageLoading"
     >
-      <el-form-item label="规格名称" prop="areaName">
+      <el-form-item label="规格名称" prop="name">
         <el-input
           :maxlength="20"
-          v-model="temp.areaName"
+          v-model="temp.name"
           placeholder="请输入规格名称"
         />
       </el-form-item>
-      <el-form-item label="排序" prop="areaName">
-        <el-input
-          :maxlength="20"
-          v-model="temp.areaName"
+      <el-form-item label="排序" prop="sort">
+        <input-cleave
+          :maxlength="3"
+          :is-decimal="0"
+          v-model="temp.sort"
           placeholder="请输入排序"
         />
       </el-form-item>
-      <el-form-item label="说明" prop="areaName">
+      <el-form-item label="说明" prop="note">
         <el-input
-          :maxlength="20"
-          v-model="temp.areaName"
+          :maxlength="500"
+          v-model="temp.note"
           placeholder="请输入说明"
         />
       </el-form-item>
-      <el-form-item label="规格值" style="margin-bottom: 0;">
+      <el-form-item label="规格值" style="margin-bottom: 0">
         <el-table
           class="form-table"
-          :data="temp.products"
+          :data="temp.values"
           style="width: 100%"
           id="sysSpecAddTable"
         >
           <el-table-column label="规格">
-            <template slot-scope="{ row }">
-              <el-form-item label="" prop="name1">
-                <el-input v-model="row.name1" clearable></el-input>
+            <template slot-scope="{ row, $index }">
+              <el-form-item
+                :rules="rules.val"
+                :prop="`values[${$index}].val`"
+                label=""
+              >
+                <el-input
+                  v-model="row.val"
+                  placeholder="请输入规格值"
+                  :maxlength="20"
+                  clearable
+                ></el-input>
               </el-form-item>
             </template>
           </el-table-column>
@@ -56,6 +66,7 @@
             <template slot-scope="{ row, $index }">
               <div>
                 <el-popover
+                  v-if="temp.values.length > 1"
                   placement="top"
                   width="120"
                   v-model="row.visible"
@@ -74,21 +85,26 @@
                       @click="deleteItem($index, row)"
                     >确定</el-button>
                   </div>
-                  <span class="el-icon-delete link-type" slot="reference"></span>
+                  <span
+                    class="el-icon-delete link-type"
+                    slot="reference"
+                  ></span>
                 </el-popover>
-
-                <span
-                  class="el-icon-rank ml10 link-type"
-                  title="长按拖拽排序"
-                ></span>
               </div>
             </template>
           </el-table-column>
         </el-table>
+
+        <el-button
+          style="margin: 10px auto; width: 100%"
+          plain
+          icon="el-icon-plus"
+          @click="handleAdd"
+        >添加一行</el-button>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click.native="dialogClose">取 消</el-button>
+      <el-button @click.native="handleClose">取 消</el-button>
       <el-button
         :loading="btnLoading"
         type="primary"
@@ -99,15 +115,17 @@
 </template>
 
 <script>
-import Sortable from 'sortablejs'
 import { cloneDeep } from 'lodash'
+import { edit } from '@/api/sys-manage/spec-list'
+
 const fields = {
-  products: [{ name: '123' }, {}],
-  remark: '' // 备注
+  name: '', // 名称
+  sort: '', // 排序
+  values: [{ val: '' }],
+  note: '' // 备注
 }
 export default {
-  components: {
-  },
+  components: {},
   props: {
     info: {
       // 传入对象 方便父子组件传值
@@ -121,20 +139,10 @@ export default {
       btnLoading: false,
       temp: cloneDeep(fields),
       textMap: ['新增', '编辑'],
-
       rules: {
-        areaCode: [
-          { required: true, message: '请输入区域编号', trigger: 'blur' }
-        ],
-        areaName: [
-          { required: true, message: '请输入区域名称', trigger: 'blur' }
-        ],
-        areaLeader: [
-          { required: true, message: '请选择区域负责人', trigger: 'change' }
-        ],
-        companyIds: [
-          { required: true, message: '请选择与关联公司', trigger: 'change' }
-        ]
+        name: [{ required: true, message: '请输入规格名称', trigger: 'blur' }],
+        val: [{ required: true, message: '请输入规格值', trigger: 'blur' }],
+        sort: [{ required: true, message: '请输入排序', trigger: 'blur' }]
       }
     }
   },
@@ -149,35 +157,64 @@ export default {
     }
   },
   methods: {
-    rowDrop() {
-      const tbody = document.querySelector(
-        '#sysSpecAddTable .el-table__body-wrapper tbody'
-      )
-      const _this = this
-      Sortable.create(tbody, {
-        animation: 150,
-        handle: '.el-icon-rank',
-        onEnd({ newIndex, oldIndex }) {
-          const currRow = _this.temp.products.splice(oldIndex, 1)[0]
-          _this.temp.products.splice(newIndex, 0, currRow)
-        }
-      })
+    handleAdd() {
+      this.temp.values.push({ val: '' })
     },
     cancelItem() {},
-    deleteItem() {},
-    handleClose(tag, index) {
+    deleteItem(index) {
+      this.temp.values.splice(index, 1)
     },
     handleSure() {
       this.$refs.dataForm.validate((v) => {
         if (!v) return
+        const { id, sort, name, note, values } = this.temp
+        const value = {}
+        values.map((c) => {
+          value[c.val] = ''
+        })
+        const sendData = {
+          id,
+          sort,
+          name,
+          note,
+          value: JSON.stringify(value)
+        }
+
+        this.btnLoading = true
+        edit(sendData)
+          .then((res) => {
+            this.btnLoading = false
+            this.$message({
+              showClose: true,
+              message: `${this.textMap[this.info.isEdit]}成功！`,
+              type: 'success'
+            })
+            this.$emit('update', this.info.isEdit)
+            this.handleClose()
+          })
+          .catch(() => {
+            this.btnLoading = false
+          })
       })
     },
     getdetail() {
-      this.$nextTick(this.rowDrop)
+      const { isEdit, data } = this.info
+      if (isEdit) {
+        const { id, sort, name, note, value } = data
+        Object.assign(this.temp, {
+          id,
+          sort,
+          name,
+          note,
+          values: Object.keys(JSON.parse(value)).map((val) => {
+            return { val }
+          })
+        })
+      }
     },
 
     // 关闭窗口
-    dialogClose() {
+    handleClose() {
       this.info.visible = false // 关闭
     },
     // 清楚数据
@@ -201,6 +238,9 @@ export default {
       height: 32px;
       padding: 0;
     }
+  }
+  .el-form-item__error {
+    position: relative;
   }
   .el-form-item--small.el-form-item {
     margin-bottom: 0;

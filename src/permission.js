@@ -10,7 +10,6 @@ NProgress.configure({ showSpinner: false })
 const whiteList = ['/login']
 
 // ---- test start
-util.setToken('qwewerwtwrtert')
 
 router.beforeEach((to, from, next) => {
   NProgress.start()

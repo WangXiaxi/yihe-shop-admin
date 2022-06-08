@@ -42,13 +42,8 @@ service.interceptors.request.use(config => {
   if (token && token !== 'undefined') {
     config.headers['Token'] = token
   }
-
-  if (config.method === 'get') {
-    if (typeof config.params === 'string' || config.params === undefined) {
-      config.params = {}
-    }
-    config.params['t'] = new Date().getTime()
-  }
+  config.params = config.params || {}
+  config.params['time'] = new Date().getTime()
   return config
 }, error => {
   // 发送失败
@@ -60,7 +55,7 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
   response => {
     // dataAxios 是 axios 返回数据中的 data
-    const dataAxios = response.data || {}
+    const dataAxios = typeof response.data === 'object' ? response.data : { status: 'error', msg: response.data }
     if (response.request.responseType === 'blob') {
       return response
     }
@@ -73,7 +68,7 @@ service.interceptors.response.use(
     // 有 status 代表这是一个后端接口 可以进行进一步的判断
     switch (status) {
       case 'success':
-        return dataAxios
+        return dataAxios.data
       case 'token30401':
         if (!isReloginShow) {
           isReloginShow = true
@@ -92,6 +87,7 @@ service.interceptors.response.use(
         }
         return Promise.reject('error')
       default:
+        console.log(234)
         // 不是正确的 code
         errorCreat(`${dataAxios.error}`)
         break

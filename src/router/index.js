@@ -124,6 +124,40 @@ export const dynamicRoutes = [
         meta: { title: '订单详情', activeMenu: '/free-mall/order-list', activeMenuPath: 'FreeMall/FreeMallOrder' }
       }
     ]
+  },
+  {
+    path: '/user-center/user-list/page',
+    component: Layout,
+    hidden: true,
+    permissions: ['admin:public'],
+    children: [
+      {
+        path: 'add',
+        component: () => import('@/views/user-center/user-list/add'),
+        name: 'UserCenterUserAdd',
+        meta: { title: '添加会员', activeMenu: '/user-center/user-list', activeMenuPath: 'UserCenter/UserCenterUser' }
+      },
+      {
+        path: 'edit/:id',
+        component: () => import('@/views/user-center/user-list/edit'),
+        name: 'UserCenterUserEdit',
+        meta: { title: '编辑会员', activeMenu: '/user-center/user-list', activeMenuPath: 'UserCenter/UserCenterUser' }
+      }
+    ]
+  },
+  {
+    path: '/sys-manage/spec-list/page',
+    component: Layout,
+    hidden: true,
+    permissions: ['admin:public'],
+    children: [
+      {
+        path: 'return',
+        component: () => import('@/views/sys-manage/spec-list/return'),
+        name: 'SysManageReturn',
+        meta: { title: '回车站', activeMenu: '/sys-manage/spec-list', activeMenuPath: 'SysManage/SysManageSpec' }
+      }
+    ]
   }
 ]
 
