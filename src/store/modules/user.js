@@ -1,6 +1,5 @@
 import { login, getInfo } from '@/api/login'
 import util from '@/utils/auth'
-import Cookies from 'js-cookie'
 
 const user = {
   state: {
