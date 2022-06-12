@@ -40,6 +40,10 @@ module.exports = {
       [process.env.VUE_APP_BASE_API]: {
         target,
         changeOrigin: true
+      },
+      '/upload': {
+        target,
+        changeOrigin: true
       }
     },
     disableHostCheck: true

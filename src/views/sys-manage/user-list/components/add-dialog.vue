@@ -24,15 +24,14 @@
       <el-form-item label="用户名" prop="admin_name">
 
         <el-input
-          :maxlength="20"
+          :maxlength="50"
           v-model="temp.admin_name"
           placeholder="请输入用户名"
         />
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
-        <input-cleave
-          :maxlength="3"
-          :is-decimal="0"
+        <el-input
+          :maxlength="50"
           v-model="temp.email"
           placeholder="请输入邮箱"
         />

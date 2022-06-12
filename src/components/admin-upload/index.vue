@@ -16,7 +16,7 @@
       :on-preview="handlePictureCardPreview"
       :on-exceed="handleExceed"
       class="avatar-uploader"
-      :action="imgURL"
+      :action="url"
       :limit="limit"
       accept=".png,.jpg,.jpeg"
       list-type="picture-card"
@@ -57,16 +57,20 @@ export default {
       default: () => {
         return ['png', 'jpg', 'jpeg']
       }
+    },
+    imgURL: {
+      type: String,
+      default: '/service/uploadGoodsPic'
     }
   },
   components: {
   },
   data() {
     return {
+      url: '',
       images: [], // 图片显示集合
       index: null, // 显示下标
-      myHeaders: { token: 'store.getters.token' }, // 请求头携带参数
-      imgURL: 'http://global.zh.uploadURL', // 请求地址
+      myHeaders: { token: this.$store.getters.token }, // 请求头携带参数
       dialogImageUrl: '', // 图片预览
       dialogVisible: false // 图片预览
     }
@@ -98,7 +102,8 @@ export default {
       this.$emit('handleRemove', deleList) // 分发移除事件
     },
     handleSuccess(response, file) { // 成功操作
-      if (response.status !== 200) {
+    console.log(response)
+      if (response.status !== 'success') {
         this.$message.error('图片上传失败！')
         setTimeout(() => { this.handleRemove(file) }, 200)
         return
@@ -106,7 +111,7 @@ export default {
       let cur = null
       this.imageList.forEach(c => {
         if (c.uid === file.uid) {
-          c.url = response.data
+          c.url = response.data.img
           cur = c
           delete c.response
         }
@@ -118,6 +123,7 @@ export default {
       this.$emit('onError')
     },
     beforeUpload(file) {
+      this.url = this.imgURL + '?time=' + new Date().getTime()
       const ext = file.name.split('.').pop().toLowerCase()
       const isLt2M = file.size / 1024 / 1024 < this.sizeLimit
       if (!this.validExtensions.includes(ext)) {

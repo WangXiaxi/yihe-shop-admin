@@ -32,11 +32,7 @@
           plain
           @click="handleAdd"
         >添加用户</el-button>
-        <el-button
-          type="primary"
-          plain
-          @click="handleReturn"
-        >回车站</el-button>
+
       </div>
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table

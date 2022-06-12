@@ -38,7 +38,7 @@ export default {
     },
     handleSubmit() {
       const arr = this.imageList.map(c => ({ url: c.url }))
-      if (arr.find(c => c.url.slice(0, 6) !== '/group')) {
+      if (arr.find(c => c.url.indexOf('blob:') > -1)) {
         return this.$message.error('图片上传未完成，请稍候！') // 上传图片前校验图片
       }
       this.$emit('successCBK', arr)

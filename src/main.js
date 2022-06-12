@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import VueBus from 'vue-bus'
 
 import 'flex.css'
 import Element from 'element-ui'
@@ -62,6 +63,7 @@ Vue.use(plugins)
 Vue.use(VueMeta)
 Vue.use(filters)
 Vue.use(VueCropper)
+Vue.use(VueBus)
 
 /**
  * If you don't want to use mock-server

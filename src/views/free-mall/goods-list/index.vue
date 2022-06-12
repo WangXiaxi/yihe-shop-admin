@@ -3,30 +3,29 @@
     <div class="grid-body" flex="dir:top">
       <div class="search">
         <div class="search-form-item">
+          <el-select
+            class="inp select-types"
+            style="width: 170px"
+            v-model="listQuery.type"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in typeOptions"
+              :key="item.key"
+              :label="item.label"
+              :value="item.key"
+            >
+            </el-option>
+          </el-select>
           <el-input
-            class="inp"
-            v-model="listQuery.carNumber"
-            placeholder="请输入商品货号"
+            class="inp inp-types"
+            v-model="listQuery.content"
+            :placeholder="`请输入${
+              typeOptions.find((c) => c.key === listQuery.type).label
+            }`"
             clearable
           />
         </div>
-        <div class="search-form-item">
-          <el-input
-            class="inp"
-            v-model="listQuery.carNumber"
-            placeholder="请输入商品名称"
-            clearable
-          />
-        </div>
-        <div class="search-form-item">
-          <el-input
-            class="inp"
-            v-model="listQuery.taskCode"
-            placeholder="请输入任务单号"
-            clearable
-          />
-        </div>
-
         <el-button
           class="inp"
           type="primary"
@@ -43,12 +42,23 @@
       </div>
       <div class="button-operation admin-mt-10">
         <el-button type="primary" plain @click="handleAdd">新增</el-button>
-        <el-button type="primary" plain @click="handleAdd">批量删除</el-button>
-        <el-button type="primary" plain @click="handleAdd">修改状态</el-button>
-        <el-button type="primary" plain @click="handleAdd">回收站</el-button>
-        <el-button type="primary" class="export" plain @click="handleAdd">导入</el-button>
-        <el-button type="primary" class="export" plain @click="handleAdd">导出</el-button>
-
+        <el-button
+          :disabled="disabled"
+          :loading="btnLoading"
+          type="primary"
+          plain
+          @click="handleDele()"
+        >批量删除</el-button>
+        <el-button
+          :disabled="disabled"
+          :loading="btnLoading"
+          type="primary"
+          plain
+          @click="handleChange"
+        >修改状态</el-button>
+        <!-- <el-button type="primary" plain @click="handleAdd">回收站</el-button> -->
+        <!-- <el-button type="primary" class="export" plain @click="handleImport">导入</el-button> -->
+        <!-- <el-button type="primary" class="export" plain @click="handleExport">导出</el-button> -->
       </div>
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
@@ -76,7 +86,7 @@
               <div v-if="item.name === 'goods'" class="goods-td">
                 <el-image
                   class="goods-td-image"
-                  :src="row.src"
+                  :src="row.img"
                   fit="contain"
                 ></el-image>
                 <div class="goods-td-info">
@@ -97,7 +107,10 @@
               </div>
 
               <div v-else-if="item.name === 'sort'">
-                <input-cleave v-model="item.sort" placeholder="排序"></input-cleave>
+                <input-cleave
+                  v-model="item.sort"
+                  placeholder="排序"
+                ></input-cleave>
               </div>
 
               <span v-else>{{ row[item.name] | fill }}</span>
@@ -109,14 +122,15 @@
                 <el-button
                   icon="el-icon-edit"
                   type="text"
-                  :loading="true"
-                  @click="handleEdit([row])"
+                  :loading="row.btnLoading"
+                  @click="handleEdit(row)"
                 >编辑</el-button>
                 <el-button
-                  style="margin-left: 0;"
+                  style="margin-left: 0"
                   icon="el-icon-delete"
                   type="text"
-                  @click="handleEdit([row])"
+                  :loading="row.btnLoading"
+                  @click="handleDele(row, 'single')"
                 >删除</el-button>
               </div>
             </template>
@@ -136,14 +150,13 @@
 </template>
 
 <script>
-import enum_hwError_obj from '@/enumeration/hw-error'
 import { cloneDeep } from 'lodash'
-import { list } from '@/api/login'
+import { list, dele } from '@/api/free-mall/goods-list'
 import pagination from '@/mixins/pagination'
 
 const baseQuery = {
-  carNumber: '', // 车牌号
-  taskCode: '' // 任务单号
+  type: 'name',
+  content: ''
 }
 
 export default {
@@ -153,16 +166,20 @@ export default {
   props: {},
   data() {
     return {
-      gridList: [{ id: '23434535', name: ' shop美体小铺护肤系列 茶树洁面胶 保湿洗面奶 250ml', src: 'http://shop.aircheng.com/pic/thumb/img/deX4B3sbb823FbkaL2z1Iaw3MfTdc8vdMeD7U6v6M3DcY3v0NcT8dalbOaG8I714MDluNjMzMGJjNzQuanBnL3cvNzAvaC83MAO0O0OO0O0O' }],
-      ...cloneDeep(enum_hwError_obj),
+      gridList: [],
       listQuery: cloneDeep(baseQuery),
       tableListText: [
-        { name: 'id', text: 'id', width: '60' },
+        { name: 'goods_no', text: '货号', width: '120' },
         { name: 'goods', text: '商品名称', width: '200' },
-        { name: 'driverName', text: '销售价', width: '100' },
-        { name: 'phoneNumber', text: '库存', width: '120' },
+        { name: 'sell_price', text: '销售价', width: '100' },
+        { name: 'market_price', text: '市场价', width: '100' },
+        { name: 'store_nums', text: '库存', width: '120' },
         { name: 'status', text: '状态', realWidth: '100' },
         { name: 'sort', text: '排序', realWidth: '100' }
+      ],
+      typeOptions: [
+        { label: '商品名称', key: 'name' },
+        { label: '货号', key: 'goods_no' }
       ],
       btnLoading: false,
       statusOptions: [
@@ -173,9 +190,47 @@ export default {
     }
   },
   computed: {},
-  created() {},
   mounted() {},
+  created() {
+    this.$bus.on('FreeMallGoodsUpdate', this.handleFilter)
+  },
+  beforeDestroy() {
+    this.$bus.off('FreeMallGoodsUpdate')
+  },
   methods: {
+    handleDele(item, type = 'more') {
+      const ids = (type === 'single' ? [item] : this.selectRowData)
+        .map((c) => c.id)
+        .join(',')
+      console.log(ids)
+      const baseObj = { more: this, single: item }[type]
+      const content = '确定删除当前选中商品吗？'
+      this.$confirm(content, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          baseObj.btnLoading = true
+          dele({ id: ids })
+            .then((res) => {
+              baseObj.btnLoading = false
+              this.$message({
+                showClose: true,
+                message: `删除成功！`,
+                type: 'success'
+              })
+              this.handleFilter()
+            })
+            .catch(() => {
+              baseObj.btnLoading = false
+            })
+        })
+        .catch(() => {})
+    },
+    handleImport() {},
+    handleExport() {},
+    handleChange() {},
     handleAdd() {
       this.$router.push('/free-mall/goods-list/page/add')
     },
@@ -185,28 +240,30 @@ export default {
     },
 
     handleData(item) {
+      item.btnLoading = false
       return item
     },
     getList() {
-      // this.agLoading = true
-      const { carNumber, taskCode, pageSize, pageIndex } = this.listQuery
+      this.agLoading = true
+      const { type, content, pageSize, pageIndex } = this.listQuery
       const sendData = {
-        carNumber,
-        taskCode,
-        pageIndex,
-        pageSize
+        'search[type]': type,
+        'search[content]': content,
+        page: pageIndex,
+        limit: pageSize,
+        paging: true
       }
       list(sendData)
         .then((res) => {
           this.agLoading = false
-          const { records, total } = res.data
+          const { data, curPage } = res
           Object.assign(this, {
             selectRowData: [],
-            gridList: (records || []).map((c) => {
+            gridList: (data || []).map((c) => {
               c.btnLoading = false
               return this.handleData(c)
             }),
-            total
+            total: curPage
           })
         })
         .catch(() => {
@@ -218,8 +275,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
- ::v-deep .el-input--small .el-input__inner {
- height: 30px;
- line-height: 30px;
+::v-deep .el-input--small .el-input__inner {
+  height: 30px;
+  line-height: 30px;
 }
 </style>
