@@ -1,5 +1,5 @@
 <template>
-  <div class="detail-container">
+  <div class="detail-container" v-loading="pageLoading">
     <div class="detail-top-container">
       <el-collapse v-model="activeNames">
         <el-collapse-item title="基础信息" name="baseInfo">
@@ -93,7 +93,7 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column label="库存">
+                <el-table-column key="key_store_nums" label="库存">
                   <template slot-scope="{ row, $index }">
                     <el-form-item
                       label=""
@@ -107,7 +107,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column label="市场价格">
+                <el-table-column key="key_market_price" label="市场价格">
                   <template slot-scope="{ row, $index }">
                     <el-form-item
                       label=""
@@ -123,7 +123,7 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column label="销售价格">
+                <el-table-column key="key_sell_price" label="销售价格">
                   <template slot-scope="{ row, $index }">
                     <el-form-item
                       label=""
@@ -139,7 +139,7 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column label="成本价格">
+                <el-table-column key="key_cost_price" label="成本价格">
                   <template slot-scope="{ row, $index }">
                     <el-form-item
                       label=""
@@ -154,7 +154,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column label="重量(克)">
+                <el-table-column key="key_weight" label="重量(克)">
                   <template slot-scope="{ row, $index }">
                     <el-form-item
                       label=""
@@ -171,7 +171,7 @@
                 </el-table-column>
 
                 <el-table-column
-                  v-if="form.products.length > 1"
+                  v-if="form.specList.length > 0"
                   label="操作"
                   fixed="right"
                   width="70"
@@ -313,7 +313,11 @@
       </el-collapse>
     </div>
     <div class="detail-btn-container">
-      <el-button type="primary" @click="handleSave">保存</el-button>
+      <el-button
+        type="primary"
+        :loading="btnLoading"
+        @click="handleSave"
+      >保存</el-button>
       <el-button type="primary" plain @click="handleClose">关闭</el-button>
     </div>
     <add-dialog :info="addDialog" @update="getSpecList"></add-dialog>
@@ -323,7 +327,11 @@
 import AdminUpload from '@/components/admin-upload'
 import AdminTinymce from '@/components/admin-tinymce'
 import { list } from '@/api/sys-manage/spec-list'
-import { getRandomGoodsNo, editGoodsInfo } from '@/api/free-mall/goods-list'
+import {
+  getRandomGoodsNo,
+  editGoodsInfo,
+  getDetail
+} from '@/api/free-mall/goods-list'
 import AddDialog from '../../../sys-manage/spec-list/components/add-dialog.vue'
 
 import { cloneDeep } from 'lodash'
@@ -335,6 +343,7 @@ const fields = {
   sort: 99, // 排序
   unit: '',
   exp: '', // 经验
+  content: '',
   mainImage: '', // 主图
   images: [],
   products: [
@@ -347,7 +356,6 @@ const fields = {
       _weight: ''
     }
   ],
-  content: '',
   // spec特殊等字段
   specList: [],
   spec: '',
@@ -372,6 +380,8 @@ export default {
   },
   data() {
     return {
+      pageLoading: false,
+      btnLoading: false,
       activeNames: ['baseInfo'],
       specOptions: [],
       specLoading: false,
@@ -396,6 +406,7 @@ export default {
   },
   created() {
     this.getSpecList()
+    console.log(this.isEdit)
     if (!this.isEdit) {
       this.getRandomGoodsNo()
     } else {
@@ -408,7 +419,84 @@ export default {
     }
   },
   methods: {
-    getDetails() {},
+    getDetails() {
+      const id = this.$route.params.id
+      this.pageLoading = true
+      getDetail({ id })
+        .then((res) => {
+          const { form, goods_photo, product } = res
+          this.pageLoading = false
+          const {
+            id,
+            name,
+            is_del,
+            is_delivery_fee,
+            point,
+            sort,
+            unit,
+            exp,
+            img,
+            content,
+            goods_no
+          } = form
+          this.goodsNo = goods_no.split('-')[0]
+          const _imgList = goods_photo.map((c) => {
+            return { url: c.img }
+          })
+          const specList = []
+
+          const products = product.map((c) => {
+            const proItem = {
+              id: c.id,
+              _goods_no: c.products_no,
+              _store_nums: c.store_nums,
+              _market_price: c.market_price,
+              _sell_price: c.sell_price,
+              _cost_price: c.cost_price,
+              _weight: c.weight
+            }
+            JSON.parse(c.spec_array).map((c) => {
+              proItem[c.id] = c.value
+              // 补充specList
+              const cur = specList.find((j) => j.id === c.id)
+              if (cur) {
+                if (!cur.value.find((j) => j === c.value)) {
+                  cur.value.push(c.value)
+                }
+              } else {
+                specList.push({
+                  id: c.id,
+                  specName: c.name,
+                  value: [c.value]
+                })
+              }
+            })
+
+            return proItem
+          })
+
+          console.log(product, specList)
+
+          Object.assign(this.form, {
+            id,
+            name,
+            is_del: Number(is_del),
+            is_delivery_fee: Number(is_delivery_fee),
+            point,
+            sort,
+            unit,
+            exp,
+            mainImage: img,
+            images: _imgList,
+            content,
+            specList,
+            products
+          })
+        })
+        .catch(() => {
+          this.pageLoading = false
+        })
+    },
     handleSave() {
       this.$refs.form.validate((v) => {
         if (!v) return
@@ -461,11 +549,11 @@ export default {
 
           _spec_array.push(
             specList.map((j) => {
-              return {
+              return JSON.stringify({
                 id: j.id,
                 name: j.specName,
                 value: c[j.id]
-              }
+              })
             })
           )
         })
@@ -602,6 +690,18 @@ export default {
     },
     handleResetSpec() {
       const { specList, products } = this.form
+      if (products.length === 0) {
+        this.form.specList = []
+        products.push({
+          _goods_no: this.goodsNo,
+          _store_nums: 100,
+          _market_price: '',
+          _sell_price: '',
+          _cost_price: '',
+          _weight: ''
+        })
+        return
+      }
       specList.map((c, ci) => {
         c.value.map((j, ji) => {
           const isE = products.find((k) => k[c.id] === j)

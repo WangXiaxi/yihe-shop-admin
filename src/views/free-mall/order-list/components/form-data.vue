@@ -3,15 +3,15 @@
     <div class="detail-top-container">
       <el-tabs v-model="activeName">
         <el-tab-pane label="商品信息" name="first">
-          <goods-list></goods-list>
+          <goods-list :form="form"></goods-list>
         </el-tab-pane>
         <el-tab-pane label="订单配置" name="second">
-          <order-setting></order-setting>
+          <order-setting :form="form"></order-setting>
         </el-tab-pane>
         <el-tab-pane
           label="收货人信息"
           name="third"
-        ><user-info></user-info></el-tab-pane>
+        ><user-info :form="form"></user-info></el-tab-pane>
       </el-tabs>
     </div>
     <div class="detail-btn-container">
@@ -32,7 +32,9 @@ export default {
   },
   data() {
     return {
-      form: {},
+      form: {
+        products: []
+      },
       rules: {
         name1: []
       },

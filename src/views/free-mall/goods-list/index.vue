@@ -5,7 +5,7 @@
         <div class="search-form-item">
           <el-select
             class="inp select-types"
-            style="width: 170px"
+            style="width: 100px"
             v-model="listQuery.type"
             placeholder="请选择"
           >
@@ -88,6 +88,7 @@
                   class="goods-td-image"
                   :src="row.img"
                   fit="contain"
+                  :preview-src-list="[row.img]"
                 ></el-image>
                 <div class="goods-td-info">
                   <div class="goods-td-name">{{ row.name }}</div>
@@ -95,7 +96,11 @@
               </div>
 
               <div v-else-if="item.name === 'status'">
-                <el-select v-model="item.status" placeholder="请选择">
+                <el-select
+                  v-model="row.is_del"
+                  placeholder="请选择"
+                  @change="handleChangeDel(row)"
+                >
                   <el-option
                     v-for="items in statusOptions"
                     :key="items.key"
@@ -108,23 +113,31 @@
 
               <div v-else-if="item.name === 'sort'">
                 <input-cleave
-                  v-model="item.sort"
+                  v-model="row.sort"
                   placeholder="排序"
+                  @blur="handleSort(row)"
                 ></input-cleave>
               </div>
 
               <span v-else>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="70">
+          <el-table-column label="操作" fixed="right" width="90">
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
+                <!-- <el-button
+                  icon="el-icon-edit"
+                  type="text"
+                  :loading="row.btnLoading"
+                  @click="handleEdit(row)"
+                >更改价格</el-button> -->
                 <el-button
                   icon="el-icon-edit"
                   type="text"
                   :loading="row.btnLoading"
                   @click="handleEdit(row)"
                 >编辑</el-button>
+
                 <el-button
                   style="margin-left: 0"
                   icon="el-icon-delete"
@@ -146,13 +159,15 @@
         @change="handlePageChange"
       />
     </div>
+    <status-dialog :info="statusDialog" @update="getList"></status-dialog>
   </div>
 </template>
 
 <script>
 import { cloneDeep } from 'lodash'
-import { list, dele } from '@/api/free-mall/goods-list'
+import { list, dele, editGoodsStatus, editGoodsSortByID } from '@/api/free-mall/goods-list'
 import pagination from '@/mixins/pagination'
+import StatusDialog from './components/status-dialog.vue'
 
 const baseQuery = {
   type: 'name',
@@ -161,7 +176,7 @@ const baseQuery = {
 
 export default {
   name: 'FreeMallGoods',
-  components: {},
+  components: { StatusDialog },
   mixins: [pagination],
   props: {},
   data() {
@@ -183,10 +198,12 @@ export default {
       ],
       btnLoading: false,
       statusOptions: [
-        { label: '待审', key: 0 },
-        { label: '上架', key: 1 },
-        { label: '下架', key: 2 }
-      ]
+        { label: '正常', key: '0' },
+        { label: '下架', key: '2' }
+      ],
+      statusDialog: {
+        visible: false
+      }
     }
   },
   computed: {},
@@ -230,7 +247,35 @@ export default {
     },
     handleImport() {},
     handleExport() {},
-    handleChange() {},
+    handleChange() {
+      Object.assign(this.statusDialog, {
+        visible: true,
+        data: this.selectRowData
+      })
+    },
+    handleChangeDel(row) {
+      const sendData = {
+        id: [row.id],
+        type: { 0: 'up', 2: 'down' }[row.is_del]
+      }
+      editGoodsStatus(sendData).then((res) => {
+        this.$message({
+          showClose: true,
+          message: `操作成功！`,
+          type: 'success'
+        })
+      })
+    },
+    handleSort(row) {
+      const sendData = {
+        id: [row.id],
+        sort: row.sort
+      }
+      editGoodsSortByID(sendData)
+    },
+    handleEdit(row) {
+      this.$router.push(`/free-mall/goods-list/page/edit/${row.id}`)
+    },
     handleAdd() {
       this.$router.push('/free-mall/goods-list/page/add')
     },
@@ -260,6 +305,7 @@ export default {
           Object.assign(this, {
             selectRowData: [],
             gridList: (data || []).map((c) => {
+              c.goodsNoDesc = c.goods_no.split('-')[0]
               c.btnLoading = false
               return this.handleData(c)
             }),

@@ -3,35 +3,26 @@
     <div class="grid-body" flex="dir:top">
       <div class="search">
         <div class="search-form-item">
+          <el-select
+            class="inp select-types"
+            style="width: 110px"
+            v-model="listQuery.type"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in typeOptions"
+              :key="item.key"
+              :label="item.label"
+              :value="item.key"
+            >
+            </el-option>
+          </el-select>
           <el-input
-            class="inp"
-            v-model="listQuery.param1"
-            placeholder="请输入订单号"
-            clearable
-          />
-        </div>
-        <div class="search-form-item">
-          <el-input
-            class="inp"
-            v-model="listQuery.param2"
-            placeholder="请输入收件人姓名"
-            clearable
-          />
-        </div>
-        <div class="search-form-item">
-          <el-input
-            class="inp"
-            v-model="listQuery.param3"
-            placeholder="请输入收件人电话"
-            clearable
-          />
-        </div>
-
-        <div class="search-form-item" v-if="isSpread">
-          <el-input
-            class="inp"
-            v-model="listQuery.param4"
-            placeholder="请输入收件人电话"
+            class="inp inp-types"
+            v-model="listQuery.content"
+            :placeholder="`请输入${
+              typeOptions.find((c) => c.key === listQuery.type).label
+            }`"
             clearable
           />
         </div>
@@ -39,13 +30,13 @@
           <el-select
             class="inp"
             style="width: 170px"
-            v-model="listQuery.param5"
+            v-model="listQuery.status"
             placeholder="请选择订单状态"
             filterable
             clearable
           >
             <el-option
-              v-for="item in param5Options"
+              v-for="item in statusOptions"
               :key="item.key"
               :label="item.label"
               :value="item.key"
@@ -57,13 +48,13 @@
           <el-select
             class="inp"
             style="width: 170px"
-            v-model="listQuery.param7"
+            v-model="listQuery.distribution_status"
             placeholder="请选择发货状态"
             filterable
             clearable
           >
             <el-option
-              v-for="item in param7Options"
+              v-for="item in distribution_statusOptions"
               :key="item.key"
               :label="item.label"
               :value="item.key"
@@ -75,13 +66,13 @@
           <el-select
             class="inp"
             style="width: 170px"
-            v-model="listQuery.param6"
+            v-model="listQuery.pay_status"
             placeholder="请选择支付状态"
             filterable
             clearable
           >
             <el-option
-              v-for="item in param6Options"
+              v-for="item in pay_statusOptions"
               :key="item.key"
               :label="item.label"
               :value="item.key"
@@ -94,7 +85,7 @@
           <el-input
             style="width: 120px"
             class="inp"
-            v-model="listQuery.param8"
+            v-model="listQuery.order_amount_down"
             placeholder="订单总额下限"
             clearable
           />
@@ -104,7 +95,7 @@
           <el-input
             style="width: 120px"
             class="inp"
-            v-model="listQuery.param9"
+            v-model="listQuery.order_amount_up"
             placeholder="订单总额上限"
             clearable
           />
@@ -112,7 +103,7 @@
 
         <div class="search-form-item" v-if="isSpread">
           <el-date-picker
-            v-model="listQuery.date"
+            v-model="listQuery.create_time"
             class="inp"
             style="width: auto"
             type="datetimerange"
@@ -127,7 +118,7 @@
 
         <div class="search-form-item" v-if="isSpread">
           <el-date-picker
-            v-model="listQuery.date"
+            v-model="listQuery.send_time"
             class="inp"
             style="width: auto"
             type="datetimerange"
@@ -142,7 +133,7 @@
 
         <div class="search-form-item" v-if="isSpread">
           <el-date-picker
-            v-model="listQuery.date"
+            v-model="listQuery.completion_time"
             class="inp"
             style="width: auto"
             type="datetimerange"
@@ -175,16 +166,28 @@
         ></i>
       </div>
       <div class="button-operation admin-mt-10">
-        <el-button type="primary" plain @click="handleAdd">添加订单</el-button>
-        <el-button type="primary" plain @click="handleAdd">批量删除</el-button>
-        <el-button type="primary" plain @click="handleAdd">批量发货</el-button>
-        <el-button type="primary" plain @click="handleAdd">回收站</el-button>
         <el-button
+          type="primary"
+          plain
+          @click="handleAdd"
+        >添加订单</el-button>
+        <el-button
+          type="primary"
+          plain
+          @click="handleDele"
+        >批量删除</el-button>
+        <el-button
+          type="primary"
+          plain
+          @click="handleSend"
+        >批量发货</el-button>
+        <!-- <el-button type="primary" plain @click="handleAdd">回收站</el-button> -->
+        <!-- <el-button
           type="primary"
           class="export"
           plain
-          @click="handleAdd"
-        >导出</el-button>
+          @click="handleExport"
+        >导出</el-button> -->
       </div>
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
@@ -198,7 +201,11 @@
           @selection-change="onRowSelected"
           v-loading="agLoading"
         >
-          <el-table-column type="selection" width="35" fixed></el-table-column>
+          <el-table-column
+            type="selection"
+            width="35"
+            fixed
+          ></el-table-column>
           <el-table-column
             v-for="(item, index) in tableListText"
             :key="index"
@@ -249,14 +256,21 @@
 </template>
 
 <script>
-import enum_hwError_obj from '@/enumeration/hw-error'
 import { cloneDeep } from 'lodash'
-import { list } from '@/api/login'
+import { list } from '@/api/free-mall/order-list.js'
 import pagination from '@/mixins/pagination'
 
 const baseQuery = {
-  carNumber: '', // 车牌号
-  taskCode: '' // 任务单号
+  type: 'order_no',
+  content: '',
+  pay_status: '',
+  distribution_status: '',
+  status: '',
+  order_amount_down: '',
+  order_amount_up: '',
+  create_time: null,
+  send_time_start: null,
+  completion_time_start: null
 }
 
 export default {
@@ -266,14 +280,7 @@ export default {
   props: {},
   data() {
     return {
-      gridList: [
-        {
-          id: '23434535',
-          name: ' shop美体小铺护肤系列 茶树洁面胶 保湿洗面奶 250ml',
-          src: 'http://shop.aircheng.com/pic/thumb/img/deX4B3sbb823FbkaL2z1Iaw3MfTdc8vdMeD7U6v6M3DcY3v0NcT8dalbOaG8I714MDluNjMzMGJjNzQuanBnL3cvNzAvaC83MAO0O0OO0O0O'
-        }
-      ],
-      ...cloneDeep(enum_hwError_obj),
+      gridList: [],
       listQuery: cloneDeep(baseQuery),
       tableListText: [
         { name: 'id', text: '订单号', width: '120' },
@@ -286,10 +293,28 @@ export default {
         { name: 'sort', text: '下单时间', realWidth: '180' }
       ],
       btnLoading: false,
+      typeOptions: [
+        { label: '订单号', key: 'order_no' },
+        { label: '收件人姓名', key: 'accept_name' },
+        { label: '收件人电话', key: 'accept_mobile' }
+      ],
       statusOptions: [
-        { label: '待审', key: 0 },
-        { label: '上架', key: 1 },
-        { label: '下架', key: 2 }
+        { key: 1, label: '新订单' },
+        { key: 2, label: '确认订单' },
+        { key: 3, label: '取消订单' },
+        { key: 4, label: '作废订单' },
+        { key: 5, label: '完成订单' },
+        { key: 6, label: '退款' },
+        { key: 7, label: '部分退款' }
+      ],
+      pay_statusOptions: [
+        { key: 0, label: '未支付' },
+        { key: 1, label: '已支付' }
+      ],
+      distribution_statusOptions: [
+        { key: 0, label: '未发货' },
+        { key: 1, label: '已发货' },
+        { key: 2, label: '部分发货' }
       ]
     }
   },
@@ -297,6 +322,9 @@ export default {
   created() {},
   mounted() {},
   methods: {
+    handleDele() {
+
+    },
     handleAdd() {
       this.$router.push('/free-mall/order-list/page/add')
     },
@@ -312,25 +340,61 @@ export default {
       return item
     },
     getList() {
-      // this.agLoading = true
-      const { carNumber, taskCode, pageSize, pageIndex } = this.listQuery
+      this.agLoading = true
+      const {
+        type,
+        content,
+        pay_status,
+        distribution_status,
+        status,
+        order_amount_down,
+        order_amount_up,
+        create_time,
+        send_time,
+        completion_time,
+
+        pageSize,
+        pageIndex
+      } = this.listQuery
       const sendData = {
-        carNumber,
-        taskCode,
-        pageIndex,
-        pageSize
+        'search[type]': type,
+        'search[content]': content,
+        pay_status,
+        distribution_status,
+        status,
+        order_amount_down,
+        order_amount_up,
+
+        page: pageIndex,
+        limit: pageSize,
+        paging: true
       }
+
+      if (create_time && create_time.length) {
+        sendData.create_time_start = create_time[0]
+        sendData.create_time_end = create_time[1]
+      }
+      if (send_time && send_time.length) {
+        sendData.send_time_start = send_time[0]
+        sendData.send_time_end = send_time[1]
+      }
+      if (completion_time && completion_time.length) {
+        sendData.completion_time_start = completion_time[0]
+        sendData.completion_time_end = completion_time[1]
+      }
+
       list(sendData)
         .then((res) => {
           this.agLoading = false
-          const { records, total } = res.data
+          const { data, curPage } = res
           Object.assign(this, {
             selectRowData: [],
-            gridList: (records || []).map((c) => {
+            gridList: (data || []).map((c) => {
+              c.goodsNoDesc = c.goods_no.split('-')[0]
               c.btnLoading = false
               return this.handleData(c)
             }),
-            total
+            total: curPage
           })
         })
         .catch(() => {

@@ -1,10 +1,11 @@
 import request from '@/utils/request'
 
 // 获取商品列表
-export function list() {
+export function list(data) {
   return request({
     url: '/service/getSystemOrderList',
-    method: 'get'
+    method: 'post',
+    data
   })
 }
 

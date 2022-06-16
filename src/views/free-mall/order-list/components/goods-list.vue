@@ -51,25 +51,32 @@
         </el-table-column>
       </el-table>
     </el-form>
+    <goods-dialog :info="goodsDialog" @update="goodsUpdate"></goods-dialog>
   </div>
 </template>
 
 <script>
+import GoodsDialog from './goods-dialog.vue'
+import { cloneDeep } from 'lodash'
+
 export default {
   props: {
-    // goodsList: {
-    //   type: Array,
-    //   default: () => {
-    //     return [{ name: 'name' }]
-    //   }
-    // }
+    form: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
-  components: {},
+  components: {
+    GoodsDialog
+  },
   computed: {},
   data() {
     return {
-      form: {
-        goodsList: [{ name: '' }]
+      goodsDialog: {
+        visible: false,
+        list: []
       },
       rules: {
         name: [{ required: true }]
@@ -77,7 +84,22 @@ export default {
     }
   },
   methods: {
-    handleAdd() {}
+        // 选择合同完成
+    goodsUpdate(list) {
+      this.temp.products.push(
+        ...list.map((c) => {
+          return Object.assign(
+            c
+          )
+        })
+      )
+    },
+    handleAdd() {
+      Object.assign(this.goodsDialog, {
+        visible: true,
+        list: cloneDeep(this.form.products)
+      })
+    }
   }
 }
 </script>

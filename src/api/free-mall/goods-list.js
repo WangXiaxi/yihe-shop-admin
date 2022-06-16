@@ -29,12 +29,20 @@ export function dele(data) {
 // 商品详情
 export function getDetail(params) {
   return request({
-    url: '/service/getGoodsDataByID',
+    url: '/service/getEditGoodsInfo',
     method: 'get',
     params
   })
 }
 
+// 更新商品价格
+export function editGoodsSortByID(data) {
+  return request({
+    url: '/service/editGoodsSortByID',
+    method: 'POST',
+    data
+  })
+}
 // 更新商品价格
 export function editGoodsPrice(data) {
   return request({

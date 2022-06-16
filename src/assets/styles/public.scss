@@ -305,6 +305,28 @@ aside {
       line-height: 30px;
     }
 
+    .inp.select-types {
+      margin-right: 0;
+      
+      .el-input__inner {
+        // border-right: none;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+    .inp.inp-types {
+      margin-left: -1px;
+      .el-input__inner {
+        background-color: transparent;
+        border-left-color: transparent;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        &:focus {
+          border-left-color: #1890ff;
+        }
+      }
+    }
+
     .el-date-editor.el-input {
       width: 130px;
     }
@@ -601,4 +623,7 @@ aside {
   color: #999;
   margin-top: 10px;
   line-height: 20px;
+}
+.el-dialog__footer {
+  padding: 0 12px 12px 12px;
 }

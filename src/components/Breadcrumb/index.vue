@@ -10,7 +10,8 @@
           "
           class="no-redirect"
         >{{ item.meta.title }}</span>
-        <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
+        <span v-else>{{ item.meta.title }}</span>
+        <!--  @click.prevent="handleLink(item)" -->
       </el-breadcrumb-item>
     </transition-group>
   </el-breadcrumb>

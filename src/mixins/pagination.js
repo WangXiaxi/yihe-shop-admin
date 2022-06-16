@@ -9,7 +9,7 @@ import { debounce } from 'lodash'
 export default {
   data() {
     return {
-      isSpread: true, // 是否搜索展开
+      isSpread: false, // 是否搜索展开
       agLoading: false, // 列表加载 loading
       firstLoading: true, // 判断首次进入页面是否请求
       needAddQuery: true, // 是否需要assign router参数
