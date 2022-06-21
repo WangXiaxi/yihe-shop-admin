@@ -89,9 +89,11 @@
 </template>
 
 <script>
+import { getAreas } from '@/api/free-mall/order-list'
+
 export default {
   components: {},
-  computed() {},
+  computed: {},
   data() {
     return {
       form: {},
@@ -100,8 +102,15 @@ export default {
       rules: {}
     }
   },
+  created() {
+    this.getAreas()
+  },
   methods: {
-    validate() {}
+    validate() {},
+    async getAreas() {
+      const adressList = await getAreas()
+      console.log(adressList)
+    }
   }
 }
 </script>

@@ -38,6 +38,7 @@ import AdminPagination from '@/components/AdminPagination'
 // input cleave
 import InputCleave from '@/components/AdminForm/InputCleave'
 import InputCleaves from '@/components/AdminForm/InputCleaves'
+import ChooseList from '@/components/admin-choose-list/index'
 // 图片裁剪
 import VueCropper from 'vue-cropper'
 
@@ -57,6 +58,8 @@ Vue.component('ImagePreview', ImagePreview)
 Vue.component('AdminPagination', AdminPagination)
 Vue.component('InputCleave', InputCleave)
 Vue.component('InputCleaves', InputCleaves)
+Vue.component('ChooseList', ChooseList)
+
 // Vue.use(plTable)
 Vue.use(directive)
 Vue.use(plugins)

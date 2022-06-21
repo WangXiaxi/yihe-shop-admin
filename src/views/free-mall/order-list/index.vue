@@ -386,7 +386,7 @@ export default {
       list(sendData)
         .then((res) => {
           this.agLoading = false
-          const { data, curPage } = res
+          const { data, totalPage } = res
           Object.assign(this, {
             selectRowData: [],
             gridList: (data || []).map((c) => {
@@ -394,7 +394,7 @@ export default {
               c.btnLoading = false
               return this.handleData(c)
             }),
-            total: curPage
+            total: totalPage
           })
         })
         .catch(() => {

@@ -51,7 +51,7 @@
         </el-table-column>
       </el-table>
     </el-form>
-    <goods-dialog :info="goodsDialog" @update="goodsUpdate"></goods-dialog>
+    <goods-dialog type="multiple" :info="goodsDialog" @update="goodsUpdate"></goods-dialog>
   </div>
 </template>
 

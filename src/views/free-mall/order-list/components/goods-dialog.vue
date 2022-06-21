@@ -4,16 +4,16 @@
     :visible.sync="info.visible"
     append-to-body
     class="setting-dialog"
-    :title="`选择SKU`"
+    :title="`选择商品`"
     v-el-drag-dialog
     width="900px"
   >
-    <div>
-      <div class="search">
+    <div class="app-main">
+      <div class="search m-l-0">
         <div class="search-form-item">
 
           <el-select
-            class="inp select-types"
+            class="inp select-types m-l-0"
             style="width: 100px"
             v-model="listQuery.type"
             placeholder="请选择"
@@ -41,73 +41,74 @@
           type="primary"
           :loading="agLoading"
           @click="handleFilter"
-        ><admin-icon name="search" /> 查询</el-button>
+        >查询</el-button>
+      </div>
+      <el-table
+        :data="gridList"
+        @select="handleSelectionChange"
+        @select-all="handleSelectionChange"
+        border
+        height="300"
+        ref="table"
+        class="grid-list admin-mt-10 grid-table"
+        :class="{ 'single-table': type === 'single' }"
+        v-loading="agLoading"
+        :header-cell-style="{
+          color: '#303133',
+          padding: '5px 0',
+          'background-color': '#f5f7fb'
+        }"
+      >
+        <el-table-column type="selection" width="35"></el-table-column>
+        <el-table-column
+          label="序号"
+          type="index"
+          width="100"
+        ></el-table-column>
+        <el-table-column
+          v-for="(item, index) in tableListText"
+          :key="index"
+          :prop="item.name"
+          :label="item.text"
+          :show-overflow-tooltip="true"
+          :min-width="item.width"
+          :width="item.realWidth"
+        >
+          <template slot-scope="{ row }">
+            <div v-if="item.name === 'goods'" class="goods-td">
+              <el-image
+                class="goods-td-image"
+                :src="row.img"
+                fit="contain"
+                :preview-src-list="[row.img]"
+              ></el-image>
+              <div class="goods-td-info">
+                <div class="goods-td-name">{{ row.name }}</div>
+              </div>
+            </div>
+
+            <span v-else>{{ row[item.name] | fill }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <admin-pagination
+        slot="footer"
+        class="footer-page"
+        :page="listQuery.pageIndex"
+        :limit="listQuery.pageSize"
+        :total="total"
+        @change="handlePageChange"
+      />
+      <div
+        class="choosed-list"
+        v-show="selectRowData.length && type === 'multiple'"
+      >
+        <div class="table-title">已选择</div>
+        <!-- 选择管理员 -->
+        <choose-list :list.sync="selectRowData" @deleteItem="removeItem" />
       </div>
     </div>
-    <el-table
-      :data="gridList"
-      @select="handleSelectionChange"
-      @select-all="handleSelectionChange"
-      border
-      height="200"
-      ref="table"
-      :class="{ 'single-table': type === 'single' }"
-      v-loading="agLoading"
-      :header-cell-style="{
-        color: '#303133',
-        padding: '5px 0',
-        'background-color': '#f5f7fb'
-      }"
-    >
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column
-        label="序号"
-        type="index"
-        width="100"
-      ></el-table-column>
-      <el-table-column
-        v-for="(item, index) in tableListText"
-        :key="index"
-        :prop="item.name"
-        :label="item.text"
-        :show-overflow-tooltip="true"
-        :min-width="item.width"
-        :width="item.realWidth"
-      >
-        <template slot-scope="{ row }">
-          <div v-if="item.name === 'goods'" class="goods-td">
-            <el-image
-              class="goods-td-image"
-              :src="row.img"
-              fit="contain"
-              :preview-src-list="[row.img]"
-            ></el-image>
-            <div class="goods-td-info">
-              <div class="goods-td-name">{{ row.name }}</div>
-            </div>
-          </div>
 
-          <span v-else>{{ row[item.name] | fill }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-    <admin-pagination
-      slot="footer"
-      class="footer-page"
-      :page="listQuery.pageIndex"
-      :limit="listQuery.pageSize"
-      :total="total"
-      @change="handlePageChange"
-    />
-    <div
-      class="choosed-list"
-      v-show="selectRowData.length && type === 'multiple'"
-    >
-      <div class="table-title">已选择</div>
-      <!-- 选择管理员 -->
-      <choose-list :list.sync="selectRowData" @deleteItem="removeItem" />
-    </div>
-    </div>
     <div slot="footer" class="dialog-footer">
       <el-button @click.native="dialogClose">取 消</el-button>
       <el-button
@@ -210,7 +211,6 @@ export default {
         // 全选时
         // 全选操作
         const needList = v.filter((c) => {
-          c.name = c.skuCode
           const index = selectRowData.findIndex((j) => j.id === c.id)
           return index === -1
         })
@@ -232,7 +232,6 @@ export default {
         const isAdd = v.find((c) => c.id === x.id)
         if (isAdd) {
           // 新增
-          x.name = x.skuCode
           selectRowData.push(x)
           return
         }
@@ -272,6 +271,10 @@ export default {
         this.selectRowData = []
       }
     },
+    handleData(item) {
+      item.btnLoading = false
+      return item
+    },
     getList() {
       this.agLoading = true
       const { type, content, pageSize, pageIndex } = this.listQuery
@@ -285,16 +288,18 @@ export default {
       list(sendData)
         .then((res) => {
           this.agLoading = false
-          const { data, curPage } = res
+          const { data, totalPage } = res
           Object.assign(this, {
-            selectRowData: [],
             gridList: (data || []).map((c) => {
               c.goodsNoDesc = c.goods_no.split('-')[0]
+              c.name = c.goods_no
               c.btnLoading = false
               return this.handleData(c)
             }),
-            total: curPage
+            total: totalPage
           })
+
+          this.setSelectRow()
         })
         .catch(() => {
           this.agLoading = false
@@ -305,7 +310,10 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.single-table ::v-deep .has-gutter .el-checkbox__input {
+.m-l-0 {
+  margin-left: 0 !important;
+}
+.single-table ::v-deep th.el-table-column--selection .el-checkbox__input {
   display: none;
 }
 </style>

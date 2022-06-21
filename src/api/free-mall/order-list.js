@@ -16,3 +16,11 @@ export function getDetail() {
     method: 'get'
   })
 }
+
+// 获取地址
+export function getAreas() {
+  return request({
+    url: '/service/getAreas',
+    method: 'get'
+  })
+}
