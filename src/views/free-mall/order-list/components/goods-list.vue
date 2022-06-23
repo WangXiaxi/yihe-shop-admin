@@ -4,54 +4,64 @@
       <el-button type="primary" plain @click="handleAdd">添加商品</el-button>
     </div>
 
-    <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+    <el-form ref="form" :model="form" :rules="rules" label-width="0px">
       <el-table
         class="grid-table admin-mt-10"
-        :data="form.goodsList"
+        :data="form.products"
         style="width: 100%"
+        empty-text="请先添加商品"
       >
         <el-table-column label="商品名称" prop="name">
           <template slot-scope="{ row }">
             <div class="goods-td">
               <el-image
                 class="goods-td-image"
-                :src="row.src"
+                :src="row.img"
                 fit="contain"
+                :preview-src-list="[row.img]"
               ></el-image>
               <div class="goods-td-info">
-                <div class="goods-td-name">{{ row.name }}</div>
+                <div class="goods-td-name">{{ row.goodsName }}</div>
               </div>
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="商品价格" prop="name"></el-table-column>
-        <el-table-column label="商品数量" prop="name">
+        <el-table-column label="商品价格" prop="sell_price"></el-table-column>
+        <el-table-column label="商品数量" prop="num">
           <template slot-scope="{ row, $index }">
             <el-form-item
               class="table-form-item"
               label=""
-              :rules="rules.name"
-              :prop="`goodsList[${$index}].name`"
+              :rules="rules.num"
+              :prop="`products.${$index}.num`"
             >
-              <el-input v-model="row.name" clearable></el-input>
+              <input-cleave
+                :is-decimal="0"
+                v-model="row.num"
+                clearable
+              ></input-cleave>
             </el-form-item>
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="70">
-          <template slot-scope="{ row }">
+          <template slot-scope="{ $index }">
             <div class="grid-handle-list">
               <el-button
                 style="margin-left: 0"
                 icon="el-icon-delete"
                 type="text"
-                @click="handleEdit([row])"
+                @click="handleDele($index)"
               >删除</el-button>
             </div>
           </template>
         </el-table-column>
       </el-table>
     </el-form>
-    <goods-dialog type="multiple" :info="goodsDialog" @update="goodsUpdate"></goods-dialog>
+    <goods-dialog
+      type="multiple"
+      :info="goodsDialog"
+      @update="goodsUpdate"
+    ></goods-dialog>
   </div>
 </template>
 
@@ -79,20 +89,30 @@ export default {
         list: []
       },
       rules: {
-        name: [{ required: true }]
+        num: [{ required: true, message: '请输入', trigger: 'blur' }]
       }
     }
   },
   methods: {
-        // 选择合同完成
+    validate(callback) {
+      if (!this.form.products.length) {
+        this.$message.error('请选择商品！')
+        return callback(false)
+      }
+      this.$refs.form.validate(callback)
+    },
+    // 选择合同完成
     goodsUpdate(list) {
-      this.temp.products.push(
-        ...list.map((c) => {
-          return Object.assign(
-            c
-          )
+      this.form.products.push(
+        ...cloneDeep(list).map((c) => {
+          return Object.assign(c, {
+            num: 1
+          })
         })
       )
+    },
+    handleDele(index) {
+      this.form.products.splice(index, 1)
     },
     handleAdd() {
       Object.assign(this.goodsDialog, {

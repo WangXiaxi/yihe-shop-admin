@@ -83,7 +83,7 @@
                 :preview-src-list="[row.img]"
               ></el-image>
               <div class="goods-td-info">
-                <div class="goods-td-name">{{ row.name }}</div>
+                <div class="goods-td-name">{{ row.goodsName }}</div>
               </div>
             </div>
 
@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import { list } from '@/api/free-mall/goods-list'
+import { getGoodsSearchList } from '@/api/free-mall/goods-list'
 import pagination from '@/mixins/pagination'
 
 const fields = {
@@ -154,10 +154,7 @@ export default {
         { name: 'goods_no', text: '货号', width: '120' },
         { name: 'goods', text: '商品名称', width: '200' },
         { name: 'sell_price', text: '销售价', width: '100' },
-        { name: 'market_price', text: '市场价', width: '100' },
-        { name: 'store_nums', text: '库存', width: '120' },
-        { name: 'status', text: '状态', realWidth: '100' },
-        { name: 'sort', text: '排序', realWidth: '100' }
+        { name: 'store_nums', text: '库存', width: '120' }
       ],
       typeOptions: [
         { label: '商品名称', key: 'name' },
@@ -283,16 +280,18 @@ export default {
         'search[content]': content,
         page: pageIndex,
         limit: pageSize,
+        is_products: 1,
         paging: true
       }
-      list(sendData)
+      getGoodsSearchList(sendData)
         .then((res) => {
           this.agLoading = false
           const { data, totalPage } = res
           Object.assign(this, {
             gridList: (data || []).map((c) => {
-              c.goodsNoDesc = c.goods_no.split('-')[0]
+              c.goodsName = c.name
               c.name = c.goods_no
+              c.id = c.product_id
               c.btnLoading = false
               return this.handleData(c)
             }),

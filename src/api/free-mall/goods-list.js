@@ -76,3 +76,12 @@ export function getRandomGoodsNo(params) {
     params
   })
 }
+
+// 获取商品列表
+export function getGoodsSearchList(data) {
+  return request({
+    url: '/service/getGoodsSearchList',
+    method: 'POST',
+    data
+  })
+}

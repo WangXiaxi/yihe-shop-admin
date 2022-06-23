@@ -166,21 +166,9 @@
         ></i>
       </div>
       <div class="button-operation admin-mt-10">
-        <el-button
-          type="primary"
-          plain
-          @click="handleAdd"
-        >添加订单</el-button>
-        <el-button
-          type="primary"
-          plain
-          @click="handleDele"
-        >批量删除</el-button>
-        <el-button
-          type="primary"
-          plain
-          @click="handleSend"
-        >批量发货</el-button>
+        <el-button type="primary" plain @click="handleAdd">添加订单</el-button>
+        <el-button type="primary" plain @click="handleDele">批量删除</el-button>
+        <el-button type="primary" plain @click="handleSend">批量发货</el-button>
         <!-- <el-button type="primary" plain @click="handleAdd">回收站</el-button> -->
         <!-- <el-button
           type="primary"
@@ -201,11 +189,7 @@
           @selection-change="onRowSelected"
           v-loading="agLoading"
         >
-          <el-table-column
-            type="selection"
-            width="35"
-            fixed
-          ></el-table-column>
+          <el-table-column type="selection" width="35" fixed></el-table-column>
           <el-table-column
             v-for="(item, index) in tableListText"
             :key="index"
@@ -322,9 +306,8 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    handleDele() {
-
-    },
+    handleSend() {},
+    handleDele() {},
     handleAdd() {
       this.$router.push('/free-mall/order-list/page/add')
     },
@@ -390,7 +373,6 @@ export default {
           Object.assign(this, {
             selectRowData: [],
             gridList: (data || []).map((c) => {
-              c.goodsNoDesc = c.goods_no.split('-')[0]
               c.btnLoading = false
               return this.handleData(c)
             }),

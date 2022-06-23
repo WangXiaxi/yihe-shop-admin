@@ -1,23 +1,35 @@
 import request from '@/utils/request'
 
 // 获取会员列表
-export function list() {
+export function list(data) {
   return request({
     url: '/service/getSystemUserList',
-    method: 'get'
+    method: 'post',
+    data
   })
 }
 // 获取详情
-export function getDetail() {
+export function getDetail(params) {
   return request({
     url: '/service/getSystemUserByID',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 // 编辑会员
-export function edit() {
+export function edit(data) {
   return request({
     url: '/service/editSystemUser',
-    method: 'post'
+    method: 'post',
+    data
+  })
+}
+
+// 删除管理员
+export function dele(data) {
+  return request({
+    url: '/service/deleSystemUser',
+    method: 'post',
+    data
   })
 }

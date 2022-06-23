@@ -24,3 +24,12 @@ export function getAreas() {
     method: 'get'
   })
 }
+
+// 编辑订单
+export function editUserOrder(data) {
+  return request({
+    url: '/service/editUserOrder',
+    method: 'post',
+    data
+  })
+}
