@@ -28,7 +28,7 @@
 import GoodsList from './goods-list.vue'
 import OrderSetting from './order-setting.vue'
 import UserInfo from './user-info.vue'
-import { editUserOrder } from '@/api/free-mall/order-list.js'
+import { editUserOrder, getDetail } from '@/api/free-mall/order-list.js'
 
 export default {
   components: {
@@ -87,7 +87,11 @@ export default {
     }
   },
   methods: {
-    getDetails() {},
+    async getDetails() {
+      this.pageLoading = true
+      const id = this.$route.params.id
+      const res = await getDetail({ id })
+    },
     validate(callback) {
       const refs = this.$refs
       const formList = []

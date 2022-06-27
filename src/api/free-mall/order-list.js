@@ -10,10 +10,11 @@ export function list(data) {
 }
 
 // 获取订单详情
-export function getDetail() {
+export function getDetail(params) {
   return request({
     url: '/service/getSystemOrderByID',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
@@ -31,5 +32,41 @@ export function editUserOrder(data) {
     url: '/service/editUserOrder',
     method: 'post',
     data
+  })
+}
+
+// 删除商品
+export function dele(data) {
+  return request({
+    url: '/service/delUserOrderByID',
+    method: 'POST',
+    data
+  })
+}
+
+// 发货记录
+export function getDeliveryByOrderId(params) {
+  return request({
+    url: '/service/getDeliveryByOrderId',
+    method: 'GET',
+    params
+  })
+}
+
+// 订单日志
+export function getOrderLogByID(params) {
+  return request({
+    url: '/service/getOrderLogByID',
+    method: 'GET',
+    params
+  })
+}
+
+// 订单作废
+export function cancel(params) {
+  return request({
+    url: '/service/cancel',
+    method: 'GET',
+    params
   })
 }

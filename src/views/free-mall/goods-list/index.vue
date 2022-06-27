@@ -41,7 +41,7 @@
         >清空</el-button>
       </div>
       <div class="button-operation admin-mt-10">
-        <el-button type="primary" plain @click="handleAdd">新增</el-button>
+        <el-button type="primary" plain @click="handleAdd">添加商品</el-button>
         <el-button
           :disabled="disabled"
           :loading="btnLoading"

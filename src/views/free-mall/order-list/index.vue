@@ -167,7 +167,13 @@
       </div>
       <div class="button-operation admin-mt-10">
         <el-button type="primary" plain @click="handleAdd">添加订单</el-button>
-        <el-button type="primary" plain @click="handleDele">批量删除</el-button>
+        <el-button
+          :disabled="disabled"
+          :loading="btnLoading"
+          type="primary"
+          plain
+          @click="handleDele()"
+        >批量删除</el-button>
         <el-button type="primary" plain @click="handleSend">批量发货</el-button>
         <!-- <el-button type="primary" plain @click="handleAdd">回收站</el-button> -->
         <!-- <el-button
@@ -214,13 +220,13 @@
                 <el-button
                   icon="el-icon-edit"
                   type="text"
-                  :loading="true"
-                  @click="handleEdit([row])"
+                  :loading="row.btnLoading"
+                  @click="handleEdit(row)"
                 >编辑</el-button>
                 <el-button
                   icon="el-icon-delete"
                   type="text"
-                  @click="handleEdit([row])"
+                  @click="handleDele(row, 'single')"
                 >删除</el-button>
               </div>
             </template>
@@ -241,7 +247,7 @@
 
 <script>
 import { cloneDeep } from 'lodash'
-import { list } from '@/api/free-mall/order-list.js'
+import { list, dele } from '@/api/free-mall/order-list.js'
 import pagination from '@/mixins/pagination'
 
 const baseQuery = {
@@ -267,14 +273,14 @@ export default {
       gridList: [],
       listQuery: cloneDeep(baseQuery),
       tableListText: [
-        { name: 'id', text: '订单号', width: '120' },
-        { name: 'goods', text: '收货人', width: '120' },
-        { name: 'driverName', text: '支付状态', width: '100' },
-        { name: 'phoneNumber', text: '发货状态', width: '100' },
-        { name: 'status', text: '订单状态', realWidth: '100' },
-        { name: 'sort', text: '支付方式', realWidth: '100' },
-        { name: 'sort', text: '用户名', realWidth: '120' },
-        { name: 'sort', text: '下单时间', realWidth: '180' }
+        { name: 'order_no', text: '订单号', width: '120' },
+        { name: 'accept_name', text: '收货人', width: '120' },
+        { name: 'pay_text', text: '支付状态', width: '100' },
+        { name: 'distribution_text', text: '发货状态', width: '100' },
+        { name: 'order_text', text: '订单状态', realWidth: '100' },
+        { name: 'payment_name', text: '支付方式', realWidth: '100' },
+        { name: 'user_name', text: '用户名', realWidth: '120' },
+        { name: 'create_time', text: '下单时间', realWidth: '180' }
       ],
       btnLoading: false,
       typeOptions: [
@@ -306,13 +312,44 @@ export default {
   created() {},
   mounted() {},
   methods: {
+    handleDetail(row) {
+      this.$router.push(`/free-mall/order-list/page/detail/${row.id}`)
+    },
+    handleEdit(row) {
+      this.$router.push(`/free-mall/order-list/page/edit/${row.id}`)
+    },
     handleSend() {},
-    handleDele() {},
+    handleDele(item, type = 'more') {
+      const ids = (type === 'single' ? [item] : this.selectRowData)
+        .map((c) => c.id)
+        .join(',')
+      const baseObj = { more: this, single: item }[type]
+      const content = '确定删除当前选中商品吗？'
+      this.$confirm(content, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          baseObj.btnLoading = true
+          dele({ id: ids })
+            .then((res) => {
+              baseObj.btnLoading = false
+              this.$message({
+                showClose: true,
+                message: `删除成功！`,
+                type: 'success'
+              })
+              this.handleFilter()
+            })
+            .catch(() => {
+              baseObj.btnLoading = false
+            })
+        })
+        .catch(() => {})
+    },
     handleAdd() {
       this.$router.push('/free-mall/order-list/page/add')
-    },
-    handleDetail(item) {
-      this.$router.push(`/free-mall/order-list/page/detail/${item.id}`)
     },
     handleReset() {
       Object.assign(this.listQuery, cloneDeep(baseQuery))

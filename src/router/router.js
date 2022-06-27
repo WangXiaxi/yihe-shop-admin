@@ -188,43 +188,44 @@ export default {
           }
         }
       ]
-    }, {
-      path: '/menu-manage',
-      name: 'MenuManage',
-      hidden: false,
-      component: 'Layout',
-      alwaysShow: false,
-      meta: {
-        title: '菜单管理',
-        noCache: false,
-        link: null,
-        icon: 'el-icon-menu'
-      },
-      children: [
-        {
-          name: 'MenuManageRoles',
-          path: 'roles-list',
-          hidden: false,
-          component: 'menu-manage/roles-list/index',
-          meta: {
-            title: '角色列表',
-            noCache: false,
-            link: null
-          }
-        },
-        {
-          name: 'MenuManageResource',
-          path: 'resource-list',
-          hidden: false,
-          component: 'menu-manage/resource-list/index',
-          meta: {
-            title: '菜单资源',
-            noCache: false,
-            link: null
-          }
-        }
-      ]
     }
+    // {
+    //   path: '/menu-manage',
+    //   name: 'MenuManage',
+    //   hidden: false,
+    //   component: 'Layout',
+    //   alwaysShow: false,
+    //   meta: {
+    //     title: '菜单管理',
+    //     noCache: false,
+    //     link: null,
+    //     icon: 'el-icon-menu'
+    //   },
+    //   children: [
+    //     {
+    //       name: 'MenuManageRoles',
+    //       path: 'roles-list',
+    //       hidden: false,
+    //       component: 'menu-manage/roles-list/index',
+    //       meta: {
+    //         title: '角色列表',
+    //         noCache: false,
+    //         link: null
+    //       }
+    //     },
+    //     {
+    //       name: 'MenuManageResource',
+    //       path: 'resource-list',
+    //       hidden: false,
+    //       component: 'menu-manage/resource-list/index',
+    //       meta: {
+    //         title: '菜单资源',
+    //         noCache: false,
+    //         link: null
+    //       }
+    //     }
+    //   ]
+    // }
 
   ]
 }

@@ -5,6 +5,8 @@ import 'flex.css'
 import Element from 'element-ui'
 import './assets/styles/element-variables.scss'
 
+import '@/utils/toFixed'
+
 import '@/assets/styles/index.scss' // global css
 import '@/assets/styles/ruoyi.scss' // ruoyi css
 import App from './App'

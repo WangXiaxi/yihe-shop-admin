@@ -4,7 +4,7 @@
     :visible.sync="info.visible"
     append-to-body
     class="setting-dialog app-main"
-    :title="`批量修改状态`"
+    :title="`支付`"
     v-el-drag-dialog
     width="400px"
   >
@@ -16,19 +16,30 @@
       ref="dataForm"
       v-loading="pageLoading"
     >
-      <el-form-item label="商品编码" prop="goodsNos">
-        <span style="line-height:32px;">{{ goodsNos }}</span>
+      <el-form-item label="订单号" prop="goodsNos">
+        <span style="line-height:32px;">{{ detail.order_no | fill }}</span>
       </el-form-item>
-      <el-form-item label="商品状态" prop="is_del">
-        <el-select style="width: 100%;" v-model="temp.is_del" placeholder="请选择">
-          <el-option
-            v-for="items in statusOptions"
-            :key="items.key"
-            :label="items.label"
-            :value="items.key"
-          >
-          </el-option>
-        </el-select>
+      <el-form-item label="下单时间" prop="goodsNos">
+        <span style="line-height:32px;">{{ detail.create_time | fill }}</span>
+      </el-form-item>
+      <el-form-item label="是否开票" prop="goodsNos">
+        <span style="line-height:32px;">{{ detail.invoice === '1' ? '是' : '否' }}</span>
+      </el-form-item>
+      <el-form-item label="税金" prop="goodsNos">
+        <span style="line-height:32px;">{{ detail.taxes | fill }}</span>
+      </el-form-item>
+      <el-form-item label="发票信息" prop="goodsNos">
+        <span style="line-height:32px;">{{ detail.invoice_info | fill }}</span>
+      </el-form-item>
+      <el-form-item label="订单金额" prop="order_amount">
+        <input-cleave
+          :is-decimal="2"
+          v-model="temp.order_amount"
+          clearable
+        ></input-cleave>
+      </el-form-item>
+      <el-form-item label="收款备注" prop="note">
+        <el-input type="textarea" v-model="temp.note" clearable></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -47,7 +58,8 @@ import { cloneDeep } from 'lodash'
 import { editGoodsStatus } from '@/api/free-mall/goods-list'
 
 const fields = {
-  is_del: ''
+  order_amount: '',
+  note: ''
 }
 export default {
   components: {},
@@ -56,6 +68,12 @@ export default {
       // 传入对象 方便父子组件传值
       type: Object,
       default: () => ({})
+    },
+    detail: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {
@@ -64,12 +82,9 @@ export default {
       btnLoading: false,
       goodsNos: '',
       temp: cloneDeep(fields),
-      statusOptions: [
-        { label: '正常', key: '0' },
-        { label: '下架', key: '2' }
-      ],
+
       rules: {
-        is_del: [{ required: true, message: '请选择状态', trigger: 'change' }]
+        order_amount: [{ required: true, message: '请输入订单金额', trigger: 'blur' }]
       }
     }
   },
@@ -87,11 +102,10 @@ export default {
     handleSure() {
       this.$refs.dataForm.validate((v) => {
         if (!v) return
-        const { is_del } = this.temp
-        const ids = this.info.data.map((c) => c.id)
+        const { order_amount, note } = this.temp
         const sendData = {
-          id: ids,
-          type: { 0: 'up', 2: 'down' }[is_del]
+          id: this.detail.id,
+         order_amount, note
         }
         this.btnLoading = true
         editGoodsStatus(sendData)
@@ -99,7 +113,7 @@ export default {
             this.btnLoading = false
             this.$message({
               showClose: true,
-              message: `批量修改状态成功！`,
+              message: `支付成功！`,
               type: 'success'
             })
             this.$emit('update', this.info.isEdit)
@@ -111,9 +125,7 @@ export default {
       })
     },
     getdetail() {
-      this.goodsNos = this.info.data
-        .map((c) => c.goods_no.split('-')[0])
-        .join(',')
+      this.temp.order_amount = this.detail.order_amount
     },
 
     // 关闭窗口
