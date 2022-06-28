@@ -89,11 +89,15 @@
 </template>
 
 <script>
-import { getAreas } from '@/api/free-mall/order-list'
-
 export default {
   props: {
     form: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    adressObj: {
       type: Object,
       default: () => {
         return {}
@@ -107,21 +111,16 @@ export default {
       provinceOptions: [],
       cityOptions: [],
       areaOptions: [],
-      rules: {},
-      adressObj: {}
+      rules: {}
     }
   },
-  created() {
-    this.getAreas()
-  },
+  created() {},
   methods: {
     validate(callback) {
       this.$refs.form.validate(callback)
     },
     async getAreas() {
-      const adressObj = await getAreas()
-      this.provinceOptions = adressObj.province
-      this.adressObj = adressObj
+      this.provinceOptions = this.adressObj.province
     },
     provinceChange(e) {
       this.cityOptions = this.adressObj.citys[e]
@@ -131,8 +130,7 @@ export default {
       this.areaOptions = this.adressObj.areas[this.form.province][e]
       this.form.area = ''
     },
-    areaChange(e) {
-    }
+    areaChange(e) {}
   }
 }
 </script>
@@ -143,6 +141,8 @@ export default {
 .tip {
   color: #999;
   font-size: 13px;
+  line-height: 16px;
+  margin-top: 4px;
 }
 .specs-box {
   display: flex;

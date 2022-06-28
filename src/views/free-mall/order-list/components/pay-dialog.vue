@@ -17,19 +17,21 @@
       v-loading="pageLoading"
     >
       <el-form-item label="订单号" prop="goodsNos">
-        <span style="line-height:32px;">{{ detail.order_no | fill }}</span>
+        <span style="line-height: 32px">{{ detail.order_no | fill }}</span>
       </el-form-item>
       <el-form-item label="下单时间" prop="goodsNos">
-        <span style="line-height:32px;">{{ detail.create_time | fill }}</span>
+        <span style="line-height: 32px">{{ detail.create_time | fill }}</span>
       </el-form-item>
       <el-form-item label="是否开票" prop="goodsNos">
-        <span style="line-height:32px;">{{ detail.invoice === '1' ? '是' : '否' }}</span>
+        <span style="line-height: 32px">{{
+          detail.invoice === '1' ? '是' : '否'
+        }}</span>
       </el-form-item>
       <el-form-item label="税金" prop="goodsNos">
-        <span style="line-height:32px;">{{ detail.taxes | fill }}</span>
+        <span style="line-height: 32px">{{ detail.taxes | fill }}</span>
       </el-form-item>
       <el-form-item label="发票信息" prop="goodsNos">
-        <span style="line-height:32px;">{{ detail.invoice_info | fill }}</span>
+        <span style="line-height: 32px">{{ detail.invoice_info | fill }}</span>
       </el-form-item>
       <el-form-item label="订单金额" prop="order_amount">
         <input-cleave
@@ -55,7 +57,7 @@
 
 <script>
 import { cloneDeep } from 'lodash'
-import { editGoodsStatus } from '@/api/free-mall/goods-list'
+import { updateUserOrder } from '@/api/free-mall/order-list'
 
 const fields = {
   order_amount: '',
@@ -84,7 +86,9 @@ export default {
       temp: cloneDeep(fields),
 
       rules: {
-        order_amount: [{ required: true, message: '请输入订单金额', trigger: 'blur' }]
+        order_amount: [
+          { required: true, message: '请输入订单金额', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -103,12 +107,16 @@ export default {
       this.$refs.dataForm.validate((v) => {
         if (!v) return
         const { order_amount, note } = this.temp
+        const { id, order_no } = this.detail
         const sendData = {
-          id: this.detail.id,
-         order_amount, note
+          id,
+          order_no,
+          amount: order_amount,
+          note,
+          editType: 'collection'
         }
         this.btnLoading = true
-        editGoodsStatus(sendData)
+        updateUserOrder(sendData)
           .then((res) => {
             this.btnLoading = false
             this.$message({
@@ -134,7 +142,7 @@ export default {
     },
     // 清楚数据
     cleared() {
-      this.temp = JSON.parse(JSON.stringify(fields))
+      this.temp = cloneDeep(fields)
       setTimeout(() => {
         this.$refs.dataForm.clearValidate()
       }, 50)

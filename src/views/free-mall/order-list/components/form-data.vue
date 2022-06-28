@@ -1,5 +1,5 @@
 <template>
-  <div class="detail-container">
+  <div class="detail-container" v-loading="pageLoading">
     <div class="detail-top-container">
       <el-tabs v-model="activeName">
         <el-tab-pane label="商品信息" name="first">
@@ -11,7 +11,11 @@
         <el-tab-pane
           label="收货人信息"
           name="third"
-        ><user-info ref="form-user" :form="form"></user-info></el-tab-pane>
+        ><user-info
+          :adress-obj="adressObj"
+          ref="form-user"
+          :form="form"
+        ></user-info></el-tab-pane>
       </el-tabs>
     </div>
     <div class="detail-btn-container">
@@ -28,7 +32,11 @@
 import GoodsList from './goods-list.vue'
 import OrderSetting from './order-setting.vue'
 import UserInfo from './user-info.vue'
-import { editUserOrder, getDetail } from '@/api/free-mall/order-list.js'
+import {
+  editUserOrder,
+  getDetail,
+  getAreas
+} from '@/api/free-mall/order-list.js'
 
 export default {
   components: {
@@ -73,10 +81,13 @@ export default {
 
         products: []
       },
-      activeName: 'first'
+      activeName: 'first',
+      adressObj: {},
+      pageLoading: false
     }
   },
-  created() {
+  async created() {
+    await this.getAreas()
     if (this.isEdit) {
       this.getDetails()
     }
@@ -87,10 +98,117 @@ export default {
     }
   },
   methods: {
+    async getAreas() {
+      const adressObj = await getAreas()
+      Object.assign(this.adressObj, adressObj)
+      this.$refs['form-user'].getAreas()
+    },
     async getDetails() {
+      console.log(3456)
       this.pageLoading = true
       const id = this.$route.params.id
       const res = await getDetail({ id })
+      this.pageLoading = false
+
+      console.log(res)
+      const {
+        invoice_info,
+        distribution, // 1: 快递 2: 货到付款
+        real_freight, // 运费
+        pay_type, // 支付方式
+        invoice, // 是否需要发票
+        note, // 备注信息
+        accept_time, // 指定送货时间
+        username, // 用户名
+        accept_name, // 收货人姓名
+        province: provinceCode,
+        city: cityCode,
+        area: areaCode,
+        address, // 收货地址
+        mobile,
+        telphone, // 手机号
+        postcode, // 邮箱
+        postscript,
+        goods_data,
+        order_id
+      } = res
+      const products = goods_data.map((c) => {
+        const goods_array = JSON.parse(c.goods_array)
+        c.goodsName = goods_array.name
+        c.name = goods_array.goodsno
+        c.id = c.product_id
+        c.num = c.goods_nums
+        c.sell_price = c.real_price
+        c.btnLoading = false
+        return c
+      })
+      const province = provinceCode
+        ? this.adressObj.province.findIndex((c) => c.value === provinceCode)
+        : ''
+      this.form.province = province
+      if (provinceCode) {
+        this.$refs['form-user'].provinceChange(province)
+      }
+      const city =
+        provinceCode && cityCode
+          ? this.adressObj.citys[province].findIndex(
+              (c) => c.value === cityCode
+            )
+          : ''
+      this.form.city = city
+
+      if (cityCode) {
+        this.$refs['form-user'].cityChange(city)
+      }
+      console.log(city)
+      const area =
+        provinceCode && cityCode && areaCode
+          ? this.adressObj.areas[province][city].findIndex(
+              (c) => c.value === areaCode
+            )
+          : ''
+
+      if (invoice_info && invoice === '1') {
+        const {
+          invoice_company_name, // 开票公司名称
+          invoice_taxcode, // 纳税识别号
+          invoice_address, // 注册地址
+          invoice_telphone, // 注册电话
+          invoice_bankname, // 开户银行
+          invoice_bankno, // 银行账号
+          invoice_type // 发票类型 1 普通发票 2 增值税专用票
+        } = JSON.parse(invoice_info)
+        Object.assign(this.form, {
+          invoice_company_name, // 开票公司名称
+          invoice_taxcode, // 纳税识别号
+          invoice_address, // 注册地址
+          invoice_telphone, // 注册电话
+          invoice_bankname, // 开户银行
+          invoice_bankno, // 银行账号
+          invoice_type // 发票类型 1 普通发票 2 增值税专用票
+        })
+      }
+      Object.assign(this.form, {
+        id,
+        order_id,
+        products,
+        distribution, // 1: 快递 2: 货到付款
+        real_freight, // 运费
+        pay_type, // 支付方式
+        invoice, // 是否需要发票
+        note, // 备注信息
+        accept_time, // 指定送货时间
+        username, // 用户名
+        accept_name, // 收货人姓名
+        province,
+        city,
+        area,
+        address, // 收货地址
+        mobile,
+        telphone, // 手机号
+        postcode, // 邮箱
+        postscript
+      })
     },
     validate(callback) {
       const refs = this.$refs
@@ -126,7 +244,8 @@ export default {
         })
         const sendData = {
           ...other,
-          province: province || province === 0 ? provinceOptions[province].value : '',
+          province:
+            province || province === 0 ? provinceOptions[province].value : '',
           area: area || area === 0 ? areaOptions[area].value : '',
           city: city || city === 0 ? cityOptions[city].value : '',
           goods_id,

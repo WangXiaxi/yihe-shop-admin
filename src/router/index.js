@@ -113,7 +113,7 @@ export const dynamicRoutes = [
       },
       {
         path: 'edit/:id',
-        component: () => import('@/views/free-mall/order-list/add'),
+        component: () => import('@/views/free-mall/order-list/edit'),
         name: 'FreeMallOrderEdit',
         meta: { title: '编辑订单', activeMenu: '/free-mall/order-list', activeMenuPath: 'FreeMall/FreeMallOrder' }
       },

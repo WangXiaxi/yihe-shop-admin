@@ -47,7 +47,7 @@ export function dele(data) {
 // 发货记录
 export function getDeliveryByOrderId(params) {
   return request({
-    url: '/service/getDeliveryByOrderId',
+    url: '/service/getDeliveryByOrderID',
     method: 'GET',
     params
   })
@@ -66,6 +66,24 @@ export function getOrderLogByID(params) {
 export function cancel(params) {
   return request({
     url: '/service/cancel',
+    method: 'GET',
+    params
+  })
+}
+
+// 订单 支付等信息
+export function updateUserOrder(data) {
+  return request({
+    url: '/service/updateUserOrder',
+    method: 'POST',
+    data
+  })
+}
+
+// getFreightCompany
+export function getFreightCompany(params) {
+  return request({
+    url: '/service/getFreightCompany',
     method: 'GET',
     params
   })

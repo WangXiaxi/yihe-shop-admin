@@ -174,7 +174,7 @@
           plain
           @click="handleDele()"
         >批量删除</el-button>
-        <el-button type="primary" plain @click="handleSend">批量发货</el-button>
+        <!-- <el-button type="primary" plain @click="handleSend">批量发货</el-button> -->
         <!-- <el-button type="primary" plain @click="handleAdd">回收站</el-button> -->
         <!-- <el-button
           type="primary"

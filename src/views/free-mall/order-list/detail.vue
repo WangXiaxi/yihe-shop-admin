@@ -1,5 +1,5 @@
 <template>
-  <div class="detail-container">
+  <div class="detail-container" v-loading="pageLoading">
     <div class="detail-top-container">
       <div class="button-operation">
         <el-button
@@ -54,6 +54,7 @@
                     class="goods-td-image"
                     :src="row.img"
                     fit="contain"
+                    :preview-src-list="[row.img]"
                   ></el-image>
                   <div class="goods-td-info">
                     <div class="goods-td-name">{{ row.name }}</div>
@@ -273,7 +274,7 @@
         <el-tab-pane label="发货记录" name="second">
           <el-table
             class="grid-table"
-            :data="[{ name: '23455' }]"
+            :data="deList"
             style="width: 100%"
           >
             <el-table-column label="配送时间" prop="name"></el-table-column>
@@ -286,13 +287,13 @@
         </el-tab-pane>
         <el-tab-pane label="订单日志" name="third">
           <el-table class="grid-table" :data="logList" style="width: 100%">
-            <el-table-column label="时间" prop="name"></el-table-column>
-            <el-table-column label="操作人" prop="name"></el-table-column>
-            <el-table-column label="动作" prop="name"></el-table-column>
-            <el-table-column label="结果" prop="name"></el-table-column>
+            <el-table-column min-width="120" label="时间" prop="addtime"></el-table-column>
+            <el-table-column min-width="80" label="操作人" prop="user"></el-table-column>
+            <el-table-column min-width="80" label="动作" prop="action"></el-table-column>
+            <el-table-column min-width="80" label="结果" prop="result"></el-table-column>
             <el-table-column
               label="备注"
-              prop="name"
+              prop="note"
               min-width="300px"
             ></el-table-column>
           </el-table>
@@ -304,23 +305,34 @@
       :info="payDialog"
       @update="getDetails"
     ></pay-dialog>
+    <send-dialog
+      :detail="detail"
+      :info="sendDialog"
+      @update="getDetails"
+    ></send-dialog>
   </div>
 </template>
 <script>
 import {
   getDetail,
   getDeliveryByOrderId,
-  getOrderLogByID
+  getOrderLogByID,
+  updateUserOrder
 } from '@/api/free-mall/order-list.js'
 import PayDialog from './components/pay-dialog.vue'
+import SendDialog from './components/send-dialog.vue'
 export default {
   name: 'FreeMallOrderDetail',
   components: {
-    PayDialog
+    PayDialog,
+    SendDialog
   },
   data() {
     return {
       payDialog: {
+        visible: false
+      },
+      sendDialog: {
         visible: false
       },
       detail: {
@@ -335,7 +347,8 @@ export default {
         to_pay: true,
         to_refundment: false
       },
-      logList: []
+      logList: [],
+      deList: []
     }
   },
   created() {
@@ -349,14 +362,37 @@ export default {
       })
     },
     handleSend() {},
-    handleCancel() {},
+    handleCancel() {
+         this.$confirm('确定作废当前订单吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.btnLoading = true
+          const sendData = {
+            editType: 'complete',
+            type: 4,
+            id: this.detail.id,
+            order_no: this.detail.order_no
+          }
+          updateUserOrder(sendData).then(res => {
+          this.btnLoading = false
+          this.$message.success('作废操作成功！')
+          this.getDetails()
+          }).catch(() => {
+          this.btnLoading = false
+          })
+        })
+        .catch(() => {})
+    },
     handleReturn() {},
     handleFinish() {},
     async getDetails() {
       const id = this.$route.params.id
       this.pageLoading = true
       const res = await getDetail({ id })
-      // const res1 = await getDeliveryByOrderId({ order_id: id })
+      const res1 = await getDeliveryByOrderId({ order_id: id })
       const res2 = await getOrderLogByID({ order_id: id })
       res.goods_data.map((c) => {
         c.goods_array = JSON.parse(c.goods_array)
@@ -365,6 +401,7 @@ export default {
         })
       })
       this.logList = res2
+      this.deList = res1
       this.pageLoading = false
       this.detail = res
       Object.assign(this.btns, res.btns)

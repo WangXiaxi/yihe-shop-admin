@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import logoImg from '@/assets/logo/logo.png'
+// import logoImg from '@/assets/logo/logo.png'
 import variables from '@/assets/styles/variables.scss'
 
 export default {
@@ -73,7 +73,7 @@ export default {
       return this.$store.state.settings.sideTheme
     },
     logo() {
-      return logoImg
+      return false // logoImg
     }
   }
 }

@@ -440,7 +440,7 @@ export default {
             goods_no
           } = form
           this.goodsNo = goods_no.split('-')[0]
-          const _imgList = goods_photo.map((c) => {
+          const _imgList = (goods_photo || []).filter(c => c.img).map((c) => {
             return { url: c.img }
           })
           const specList = []
