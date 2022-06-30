@@ -126,6 +126,52 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/dela-mall/goods-list/page',
+    component: Layout,
+    hidden: true,
+    permissions: ['admin:public'],
+    children: [
+      {
+        path: 'add',
+        component: () => import('@/views/dela-mall/goods-list/add'),
+        name: 'DelaMallGoodsAdd',
+        meta: { title: '添加商品', activeMenu: '/dela-mall/goods-list', activeMenuPath: 'DelaMall/DelaMallGoods' }
+      },
+      {
+        path: 'edit/:id',
+        component: () => import('@/views/dela-mall/goods-list/edit'),
+        name: 'DelaMallGoodsEdit',
+        meta: { title: '编辑商品', activeMenu: '/dela-mall/goods-list', activeMenuPath: 'DelaMall/DelaMallGoods' }
+      }
+    ]
+  },
+  {
+    path: '/dela-mall/order-list/page',
+    component: Layout,
+    hidden: true,
+    permissions: ['admin:public'],
+    children: [
+      {
+        path: 'add',
+        component: () => import('@/views/dela-mall/order-list/add'),
+        name: 'DelaMallOrderAdd',
+        meta: { title: '添加订单', activeMenu: '/dela-mall/order-list', activeMenuPath: 'DelaMall/DelaMallOrder' }
+      },
+      {
+        path: 'edit/:id',
+        component: () => import('@/views/dela-mall/order-list/edit'),
+        name: 'DelaMallOrderEdit',
+        meta: { title: '编辑订单', activeMenu: '/dela-mall/order-list', activeMenuPath: 'DelaMall/DelaMallOrder' }
+      },
+      {
+        path: 'detail/:id',
+        component: () => import('@/views/dela-mall/order-list/detail'),
+        name: 'DelaMallOrderDetail',
+        meta: { title: '订单详情', activeMenu: '/dela-mall/order-list', activeMenuPath: 'DelaMall/DelaMallOrder' }
+      }
+    ]
+  },
+  {
     path: '/user-center/user-list/page',
     component: Layout,
     hidden: true,

@@ -368,7 +368,7 @@ import PayDialog from './components/pay-dialog.vue'
 import SendDialog from './components/send-dialog.vue'
 import ReturnDialog from './components/return-dialog.vue'
 export default {
-  name: 'FreeMallOrderDetail',
+  name: 'DelaMallOrderDetail',
   components: {
     PayDialog,
     SendDialog,
