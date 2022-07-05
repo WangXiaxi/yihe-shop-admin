@@ -296,7 +296,8 @@ export default {
         'search[content]': content,
         page: pageIndex,
         limit: pageSize,
-        paging: true
+        paging: true,
+        type: 'package'
       }
       list(sendData)
         .then((res) => {

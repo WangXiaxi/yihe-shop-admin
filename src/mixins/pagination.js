@@ -35,7 +35,7 @@ export default {
   computed: {
     // 编辑/删除/详情按钮过滤
     disabled() {
-      return !(this.selectRowData.length === 1)
+      return !(this.selectRowData.length >= 1)
     },
     ...mapGetters('admin/user', ['permissions'])
   },

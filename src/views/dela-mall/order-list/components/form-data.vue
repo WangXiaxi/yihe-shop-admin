@@ -250,7 +250,8 @@ export default {
           city: city || city === 0 ? cityOptions[city].value : '',
           goods_id,
           product_id,
-          goods_nums
+          goods_nums,
+          type: 'package'
         }
 
         this.btnLoading = true

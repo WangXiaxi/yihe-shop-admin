@@ -38,7 +38,7 @@ export function editUserOrder(data) {
 // 删除商品
 export function dele(data) {
   return request({
-    url: '/service/delUserOrderByID',
+    url: '/service/delOrderByID',
     method: 'POST',
     data
   })

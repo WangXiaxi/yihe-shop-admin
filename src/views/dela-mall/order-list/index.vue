@@ -322,7 +322,6 @@ export default {
     handleDele(item, type = 'more') {
       const ids = (type === 'single' ? [item] : this.selectRowData)
         .map((c) => c.id)
-        .join(',')
       const baseObj = { more: this, single: item }[type]
       const content = '确定删除当前选中商品吗？'
       this.$confirm(content, '提示', {
@@ -387,7 +386,8 @@ export default {
 
         page: pageIndex,
         limit: pageSize,
-        paging: true
+        paging: true,
+        type: 'package'
       }
 
       if (create_time && create_time.length) {

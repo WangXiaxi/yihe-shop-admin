@@ -530,7 +530,8 @@ export default {
               return c.url
             })
             .join(','),
-          content
+          content,
+          type: 'package'
         }
         const _goods_no = []
         const _store_nums = []
