@@ -186,6 +186,17 @@ export default {
             noCache: false,
             link: null
           }
+        },
+        {
+          name: 'SysManageBanner',
+          path: 'banner-list',
+          hidden: false,
+          component: 'sys-manage/banner-list/index',
+          meta: {
+            title: '广告图配置',
+            noCache: false,
+            link: null
+          }
         }
       ]
     }

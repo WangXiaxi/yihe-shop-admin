@@ -175,7 +175,7 @@ const baseQuery = {
 }
 
 export default {
-  name: 'FreeMallGoods',
+  name: 'DelaMallGoods',
   components: { StatusDialog },
   mixins: [pagination],
   props: {},
@@ -209,10 +209,10 @@ export default {
   computed: {},
   mounted() {},
   created() {
-    this.$bus.on('FreeMallGoodsUpdate', this.handleFilter)
+    this.$bus.on('DelaMallGoodsUpdate', this.handleFilter)
   },
   beforeDestroy() {
-    this.$bus.off('FreeMallGoodsUpdate')
+    this.$bus.off('DelaMallGoodsUpdate')
   },
   methods: {
     handleDele(item, type = 'more') {
@@ -274,10 +274,10 @@ export default {
       editGoodsSortByID(sendData)
     },
     handleEdit(row) {
-      this.$router.push(`/free-mall/goods-list/page/edit/${row.id}`)
+      this.$router.push(`/dela-mall/goods-list/page/edit/${row.id}`)
     },
     handleAdd() {
-      this.$router.push('/free-mall/goods-list/page/add')
+      this.$router.push('/dela-mall/goods-list/page/add')
     },
     handleReset() {
       Object.assign(this.listQuery, cloneDeep(baseQuery))
