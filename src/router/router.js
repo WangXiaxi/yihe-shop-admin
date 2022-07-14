@@ -197,6 +197,17 @@ export default {
             noCache: false,
             link: null
           }
+        },
+        {
+          name: 'SysManageClass',
+          path: 'class-list',
+          hidden: false,
+          component: 'sys-manage/class-list/index',
+          meta: {
+            title: '商品分类',
+            noCache: false,
+            link: null
+          }
         }
       ]
     }

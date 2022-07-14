@@ -21,6 +21,13 @@
               </el-radio-group>
             </el-form-item>
 
+            <el-form-item label="选择分类" prop="brand_id">
+              <admin-tree-select
+                :options="options"
+                v-model="form.brand_id"
+              ></admin-tree-select>
+            </el-form-item>
+
             <el-form-item label="附属数据">
               <el-table class="form-table" :data="[{}]" style="width: 100%">
                 <el-table-column label="排序">
@@ -333,6 +340,8 @@ import {
   getDetail
 } from '@/api/free-mall/goods-list'
 import AddDialog from '../../../sys-manage/spec-list/components/add-dialog.vue'
+import { getCategoryList } from '@/api/sys-manage/class-list'
+import AdminTreeSelect from '@/components/admin-tree-select'
 
 import { cloneDeep } from 'lodash'
 const fields = {
@@ -346,6 +355,7 @@ const fields = {
   content: '',
   mainImage: '', // 主图
   images: [],
+  brand_id: '',
   products: [
     {
       _goods_no: '',
@@ -365,7 +375,8 @@ export default {
   components: {
     AdminUpload,
     AdminTinymce,
-    AddDialog
+    AddDialog,
+    AdminTreeSelect
   },
   props: {
     isEdit: {
@@ -387,6 +398,7 @@ export default {
       specLoading: false,
       specValueOptions: [],
       form: cloneDeep(fields),
+      options: [],
       goodsNo: '',
       rules: {
         name: [{ required: true, message: '请输入', trigger: 'blur' }],
@@ -405,8 +417,8 @@ export default {
     }
   },
   created() {
+    this.getCategoryList()
     this.getSpecList()
-    console.log(this.isEdit)
     if (!this.isEdit) {
       this.getRandomGoodsNo()
     } else {
@@ -419,6 +431,23 @@ export default {
     }
   },
   methods: {
+    handleData(item) {
+      item.btnLoading = false
+      item.label = item.name
+      item.children?.map(this.handleData)
+      return item
+    },
+    getCategoryList() {
+      const sendData = {}
+      getCategoryList(sendData)
+        .then((res) => {
+          Object.assign(this, {
+            options: (res || []).map((c) => {
+              return this.handleData(c)
+            })
+          })
+        })
+    },
     getDetails() {
       const id = this.$route.params.id
       this.pageLoading = true
@@ -437,7 +466,8 @@ export default {
             exp,
             img,
             content,
-            goods_no
+            goods_no,
+            brand_id
           } = form
           this.goodsNo = goods_no.split('-')[0]
           const _imgList = (goods_photo || []).filter(c => c.img).map((c) => {
@@ -490,7 +520,8 @@ export default {
             images: _imgList,
             content,
             specList,
-            products
+            products,
+            brand_id
           })
         })
         .catch(() => {
@@ -513,7 +544,8 @@ export default {
           images,
           products,
           content,
-          specList
+          specList,
+          brand_id
         } = this.form
         const sendData = {
           id,
@@ -531,6 +563,7 @@ export default {
             })
             .join(','),
           content,
+          brand_id,
           type: 'package'
         }
         const _goods_no = []

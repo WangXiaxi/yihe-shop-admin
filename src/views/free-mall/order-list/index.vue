@@ -386,7 +386,8 @@ export default {
 
         page: pageIndex,
         limit: pageSize,
-        paging: true
+        paging: true,
+          type: 'free'
       }
 
       if (create_time && create_time.length) {

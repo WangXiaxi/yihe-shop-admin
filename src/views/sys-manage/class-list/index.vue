@@ -1,38 +1,18 @@
 <template>
   <div class="grid-table">
     <div class="grid-body" flex="dir:top">
-      <!-- <div class="search">
-        <div class="search-form-item">
-          <el-input
-            class="inp"
-            v-model="listQuery.name"
-            placeholder="请输入规格名称"
-            clearable
-          />
-        </div>
-
-        <el-button
-          class="inp"
-          type="primary"
-          :loading="agLoading"
-          @click="handleFilter"
-          icon="el-icon-search"
-        >查询</el-button>
-        <el-button
-          class="inp"
-          :loading="agLoading"
-          @click="handleReset"
-          icon="el-icon-refresh"
-        >清空</el-button>
-      </div> -->
       <div class="button-operation">
-        <el-button type="primary" plain @click="handleAdd">添加</el-button>
+        <!-- admin-mt-10 -->
+        <el-button type="primary" plain @click="handleAdd">添加分类</el-button>
       </div>
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
           class="grid-table"
           border
           stripe
+          default-expand-all
+          row-key="id"
+          :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
           :data="gridList"
           :height="tableHeight"
           :row-height="55"
@@ -51,7 +31,14 @@
             :width="item.realWidth"
           >
             <template slot-scope="{ row }">
-              <div v-if="item.name === 'img'" class="goods-td">
+              <div v-if="item.name === 'sort'">
+                <input-cleave
+                  v-model="row.sort"
+                  placeholder="排序"
+                  @blur="handleSort(row)"
+                ></input-cleave>
+              </div>
+              <div v-else-if="item.name === 'img'" class="goods-td">
                 <el-image
                   class="goods-td-image"
                   style="height: auto"
@@ -73,9 +60,9 @@
                   @click="handleEdit(row)"
                 >编辑</el-button>
                 <el-button
-                  :loading="row.btnLoading"
                   icon="el-icon-delete"
                   type="text"
+                  :loading="row.btnLoading"
                   @click="handleDele(row, 'single')"
                 >删除</el-button>
               </div>
@@ -83,31 +70,26 @@
           </el-table-column>
         </el-table>
       </div>
-      <admin-pagination
-        slot="footer"
-        class="footer-page"
-        :page="listQuery.pageIndex"
-        :limit="listQuery.pageSize"
-        :total="total"
-        @change="handlePageChange"
-      />
     </div>
-    <add-dialog :info="addDialog" @update="handleUpdate"></add-dialog>
+    <add-dialog
+      :info="addDialog"
+      @update="handleUpdate"
+      :options="gridList"
+    ></add-dialog>
   </div>
 </template>
 
 <script>
 import { cloneDeep } from 'lodash'
+import { getCategoryList, dele, edit } from '@/api/sys-manage/class-list'
 import pagination from '@/mixins/pagination'
-import { list, dele } from '@/api/sys-manage/banner-list'
+
 import AddDialog from './components/add-dialog.vue'
 
-const baseQuery = {
-  name: '' // 规格名称
-}
+const baseQuery = {}
 
 export default {
-  name: 'SysManageBanner',
+  name: 'SysManageClass',
   components: { AddDialog },
   mixins: [pagination],
   props: {},
@@ -115,10 +97,9 @@ export default {
     return {
       listQuery: cloneDeep(baseQuery),
       tableListText: [
-        { name: 'name', text: '名称', width: '120' },
-        { name: 'img', text: '图片', width: '120' },
-        { name: 'url', text: '跳转链接', width: '120' },
-        { name: 'sort', text: '排序', width: '100' }
+        { name: 'name', text: '名称', width: '100' },
+        // { name: 'img', text: '图片', width: '200' },
+        { name: 'sort', text: '排序', width: '200' }
       ],
       btnLoading: false,
       addDialog: {
@@ -130,13 +111,23 @@ export default {
   created() {},
   mounted() {},
   methods: {
+    handleSort(row) {
+      const { id, parent_id, name, sort } = row
+      const sendData = {
+        id,
+        parent_id,
+        name,
+        sort,
+        visibility: 1
+      }
+      edit(sendData)
+    },
     handleDele(item, type = 'more') {
       const ids = (type === 'single' ? [item] : this.selectRowData)
         .map((c) => c.id)
         .join(',')
-      console.log(ids)
       const baseObj = { more: this, single: item }[type]
-      const content = '确定删除当前选中规格吗？'
+      const content = '确定删除当前后台用户吗？'
       this.$confirm(content, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -144,7 +135,7 @@ export default {
       })
         .then(() => {
           baseObj.btnLoading = true
-          dele({ id: ids })
+          dele({ cat_id: ids })
             .then((res) => {
               baseObj.btnLoading = false
               this.$message({
@@ -160,6 +151,7 @@ export default {
         })
         .catch(() => {})
     },
+    handleReturn() {},
     handleEdit(data) {
       Object.assign(this.addDialog, {
         visible: true,
@@ -183,27 +175,22 @@ export default {
 
     handleData(item) {
       item.btnLoading = false
+      item.label = item.name
+      item.children?.map(this.handleData)
       return item
     },
     getList() {
       this.agLoading = true
-      const { name, pageSize, pageIndex } = this.listQuery
-      const sendData = {
-        name,
-        page: pageIndex,
-        limit: pageSize,
-        paging: true
-      }
-      list(sendData)
+      const sendData = {}
+      getCategoryList(sendData)
         .then((res) => {
           this.agLoading = false
-          const { data, totalPage } = res
           Object.assign(this, {
             selectRowData: [],
-            gridList: (data || []).map((c) => {
+            gridList: (res || []).map((c) => {
+              c.btnLoading = false
               return this.handleData(c)
-            }),
-            total: totalPage
+            })
           })
         })
         .catch(() => {

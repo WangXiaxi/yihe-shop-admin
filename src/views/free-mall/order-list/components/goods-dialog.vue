@@ -283,7 +283,8 @@ export default {
         page: pageIndex,
         limit: pageSize,
         is_products: 1,
-        paging: true
+        paging: true,
+        type: 'free'
       }
       getGoodsSearchList(sendData)
         .then((res) => {
