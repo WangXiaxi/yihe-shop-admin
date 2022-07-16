@@ -148,6 +148,61 @@ export default {
             noCache: false,
             link: null
           }
+        },
+        {
+          name: 'UserCenterCard',
+          path: 'card-list',
+          hidden: false,
+          component: 'user-center/card-list/index',
+          meta: {
+            title: '用户银行卡列表',
+            noCache: false,
+            link: null
+          }
+        },
+        {
+          name: 'UserCenterReturn',
+          path: 'return-list',
+          hidden: false,
+          component: 'user-center/return-list/index',
+          meta: {
+            title: '用户重消积分列表',
+            noCache: false,
+            link: null
+          }
+        },
+        {
+          name: 'UserCenterAward',
+          path: 'award-list',
+          hidden: false,
+          component: 'user-center/award-list/index',
+          meta: {
+            title: '用户奖励列表',
+            noCache: false,
+            link: null
+          }
+        },
+        {
+          name: 'UserCenterBtpoint',
+          path: 'btpoint-list',
+          hidden: false,
+          component: 'user-center/btpoint-list/index',
+          meta: {
+            title: '版通积分列表',
+            noCache: false,
+            link: null
+          }
+        },
+        {
+          name: 'UserCenterXjq',
+          path: 'xjq-list',
+          hidden: false,
+          component: 'user-center/xjq-list/index',
+          meta: {
+            title: '现金券列表',
+            noCache: false,
+            link: null
+          }
         }
       ]
     }, {

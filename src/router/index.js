@@ -126,6 +126,52 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/sele-mall/goods-list/page',
+    component: Layout,
+    hidden: true,
+    permissions: ['admin:public'],
+    children: [
+      {
+        path: 'add',
+        component: () => import('@/views/sele-mall/goods-list/add'),
+        name: 'SeleMallGoodsAdd',
+        meta: { title: '添加商品', activeMenu: '/sele-mall/goods-list', activeMenuPath: 'SeleMall/SeleMallGoods' }
+      },
+      {
+        path: 'edit/:id',
+        component: () => import('@/views/sele-mall/goods-list/edit'),
+        name: 'SeleMallGoodsEdit',
+        meta: { title: '编辑商品', activeMenu: '/sele-mall/goods-list', activeMenuPath: 'SeleMall/SeleMallGoods' }
+      }
+    ]
+  },
+  {
+    path: '/sele-mall/order-list/page',
+    component: Layout,
+    hidden: true,
+    permissions: ['admin:public'],
+    children: [
+      {
+        path: 'add',
+        component: () => import('@/views/sele-mall/order-list/add'),
+        name: 'SeleMallOrderAdd',
+        meta: { title: '添加订单', activeMenu: '/sele-mall/order-list', activeMenuPath: 'SeleMall/SeleMallOrder' }
+      },
+      {
+        path: 'edit/:id',
+        component: () => import('@/views/sele-mall/order-list/edit'),
+        name: 'SeleMallOrderEdit',
+        meta: { title: '编辑订单', activeMenu: '/sele-mall/order-list', activeMenuPath: 'SeleMall/SeleMallOrder' }
+      },
+      {
+        path: 'detail/:id',
+        component: () => import('@/views/sele-mall/order-list/detail'),
+        name: 'SeleMallOrderDetail',
+        meta: { title: '订单详情', activeMenu: '/sele-mall/order-list', activeMenuPath: 'SeleMall/SeleMallOrder' }
+      }
+    ]
+  },
+  {
     path: '/dela-mall/goods-list/page',
     component: Layout,
     hidden: true,
