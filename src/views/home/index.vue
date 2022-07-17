@@ -42,7 +42,7 @@
           <span>{{ row[item.name] | fill }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" fixed="right" width="120">
+      <el-table-column label="操作" fixed="right" width="80" align="center">
         <template slot-scope="{ row }">
           <div class="grid-handle-list">
             <el-button
@@ -50,12 +50,12 @@
               type="text"
               @click="handleDetail(row)"
             >查看</el-button>
-            <el-button
+            <!-- <el-button
               icon="el-icon-edit"
               type="text"
               :loading="row.btnLoading"
               @click="handleEdit(row)"
-            >编辑</el-button>
+            >编辑</el-button> -->
           </div>
         </template>
       </el-table-column>
@@ -139,6 +139,14 @@ export default {
     this.getList()
   },
   methods: {
+    handleDetails(row) {
+     const typeUrl = {
+      free: `/free-mall/order-list/page/detail/${row.id}`,
+      preference: `/sele-mall/order-list/page/detail/${row.id}`,
+      package: `/dela-mall/order-list/page/detail/${row.id}`
+     }
+     this.goUrl(typeUrl[row.type])
+    },
     async getList() {
       const res = await list()
       this.todoList.map((c) => {

@@ -124,7 +124,7 @@ export default {
         title: '会员中心',
         noCache: false,
         link: null,
-        icon: 'el-icon-menu'
+        icon: 'el-icon-user-solid'
       },
       children: [
         {
@@ -217,7 +217,7 @@ export default {
         title: '后台管理',
         noCache: false,
         link: null,
-        icon: 'el-icon-menu'
+        icon: 'el-icon-s-platform'
       },
       children: [
         {
