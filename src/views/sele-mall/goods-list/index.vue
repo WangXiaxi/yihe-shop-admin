@@ -187,6 +187,7 @@ export default {
         { name: 'goods_no', text: '货号', width: '120' },
         { name: 'goods', text: '商品名称', width: '200' },
         { name: 'sell_price', text: '销售价', width: '100' },
+        { name: 'point_price', text: '销售积分', width: '100' },
         { name: 'market_price', text: '市场价', width: '100' },
         { name: 'store_nums', text: '库存', width: '120' },
         { name: 'status', text: '状态', realWidth: '100' },
@@ -307,6 +308,7 @@ export default {
             selectRowData: [],
             gridList: (data || []).map((c) => {
               c.goodsNoDesc = c.goods_no.split('-')[0]
+              c.id = c.goods_id
               c.btnLoading = false
               return this.handleData(c)
             }),

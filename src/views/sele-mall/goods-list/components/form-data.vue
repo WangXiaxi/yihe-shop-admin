@@ -501,7 +501,7 @@ export default {
               _market_price: c.market_price,
               _sell_price: c.sell_price,
               _cost_price: c.cost_price,
-              _point_price: c._point_price,
+              _point_price: c.point_price,
               _weight: c.weight
             }
             JSON.parse(c.spec_array).map((c) => {

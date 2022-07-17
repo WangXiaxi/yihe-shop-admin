@@ -307,6 +307,7 @@ export default {
             selectRowData: [],
             gridList: (data || []).map((c) => {
               c.goodsNoDesc = c.goods_no.split('-')[0]
+              c.id = c.goods_id
               c.btnLoading = false
               return this.handleData(c)
             }),

@@ -109,7 +109,7 @@ export default {
       this.agLoading = true
       const { pageSize, pageIndex, username } = this.listQuery
       const sendData = {
-        username,
+        'search[username=]': username,
         page: pageIndex,
         limit: pageSize,
         paging: true
