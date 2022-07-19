@@ -117,6 +117,7 @@ export default {
       tableListText: [
         { name: 'name', text: '名称', width: '120' },
         { name: 'img', text: '图片', width: '120' },
+        { name: 'type', text: '类型', width: '120' },
         { name: 'url', text: '跳转链接', width: '120' },
         { name: 'sort', text: '排序', width: '100' }
       ],

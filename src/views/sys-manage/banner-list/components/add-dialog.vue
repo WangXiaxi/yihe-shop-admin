@@ -18,18 +18,29 @@
     >
       <el-form-item label="名称" prop="name">
         <el-input
-          :maxlength="20"
+          :maxlength="200"
           v-model="temp.name"
           placeholder="请输入名称"
         />
       </el-form-item>
       <el-form-item label="跳转链接" prop="url">
         <el-input
-          :maxlength="20"
+          :maxlength="200"
           v-model="temp.url"
           placeholder="请输入跳转链接"
         />
       </el-form-item>
+      <el-form-item label="类型" prop="type">
+        <el-input
+          :maxlength="200"
+          v-model="temp.type"
+          placeholder="请输入类型"
+        />
+        <span
+          class="avatar-uploader-tip"
+        >首页轮播：mobile;首页分类：category</span>
+      </el-form-item>
+
       <el-form-item label="图片" prop="imageList">
         <admin-upload
           :image-list="temp.imageList"
@@ -71,6 +82,7 @@ const fields = {
   name: '', // 名称
   sort: '', // 排序
   url: '', // url
+  type: '',
   imageList: []
 }
 export default {
@@ -91,8 +103,11 @@ export default {
       rules: {
         name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
         sort: [{ required: true, message: '请输入排序', trigger: 'blur' }],
+        type: [{ required: true, message: '请输入类型', trigger: 'blur' }],
         url: [{ required: true, message: '请输入url', trigger: 'blur' }],
-        imageList: [{ required: true, message: '请上传图片', trigger: 'change' }]
+        imageList: [
+          { required: true, message: '请上传图片', trigger: 'change' }
+        ]
       }
     }
   },
@@ -113,12 +128,13 @@ export default {
     handleSure() {
       this.$refs.dataForm.validate((v) => {
         if (!v) return
-        const { id, sort, name, url, imageList } = this.temp
+        const { id, sort, name, url, type, imageList } = this.temp
         const sendData = {
           id,
           sort,
           name,
           url,
+          type,
           img: imageList[0].url
         }
 
@@ -142,14 +158,14 @@ export default {
     getdetail() {
       const { isEdit, data } = this.info
       if (isEdit) {
-        const { id,
-          sort,
-          name,
-          url, img } = data
+        const { id, sort, name, type, url, img } = data
         Object.assign(this.temp, {
           id,
-          sort, name,
+          sort,
+          name,
           url,
+          type,
+
           imageList: [{ url: img }]
         })
       }

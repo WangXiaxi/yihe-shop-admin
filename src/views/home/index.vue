@@ -139,7 +139,7 @@ export default {
     this.getList()
   },
   methods: {
-    handleDetails(row) {
+    handleDetail(row) {
      const typeUrl = {
       free: `/free-mall/order-list/page/detail/${row.id}`,
       preference: `/sele-mall/order-list/page/detail/${row.id}`,
