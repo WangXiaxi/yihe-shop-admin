@@ -439,14 +439,13 @@ export default {
     },
     getCategoryList() {
       const sendData = {}
-      getCategoryList(sendData)
-        .then((res) => {
-          Object.assign(this, {
-            options: (res || []).map((c) => {
-              return this.handleData(c)
-            })
+      getCategoryList(sendData).then((res) => {
+        Object.assign(this, {
+          options: (res || []).map((c) => {
+            return this.handleData(c)
           })
         })
+      })
     },
     getDetails() {
       const id = this.$route.params.id
@@ -470,40 +469,53 @@ export default {
             brand_id
           } = form
           this.goodsNo = goods_no.split('-')[0]
-          const _imgList = (goods_photo || []).filter(c => c.img).map((c) => {
-            return { url: c.img }
-          })
-          const specList = []
-
-          const products = product.map((c) => {
-            const proItem = {
-              id: c.id,
-              _goods_no: c.products_no,
-              _store_nums: c.store_nums,
-              _market_price: c.market_price,
-              _sell_price: c.sell_price,
-              _cost_price: c.cost_price,
-              _weight: c.weight
-            }
-            JSON.parse(c.spec_array).map((c) => {
-              proItem[c.id] = c.value
-              // 补充specList
-              const cur = specList.find((j) => j.id === c.id)
-              if (cur) {
-                if (!cur.value.find((j) => j === c.value)) {
-                  cur.value.push(c.value)
-                }
-              } else {
-                specList.push({
-                  id: c.id,
-                  specName: c.name,
-                  value: [c.value]
-                })
-              }
+          const _imgList = (goods_photo || [])
+            .filter((c) => c.img)
+            .map((c) => {
+              return { url: c.img }
             })
+          const specList = []
+          let products = [
+            {
+              _goods_no: form.goods_no,
+              _store_nums: form.store_nums,
+              _market_price: form.market_price,
+              _sell_price: form.sell_price,
+              _cost_price: form.cost_price,
+              _weight: form.weight
+            }
+          ]
+          if (product && product.length) {
+            products = product.map((c) => {
+              const proItem = {
+                id: c.id,
+                _goods_no: c.products_no,
+                _store_nums: c.store_nums,
+                _market_price: c.market_price,
+                _sell_price: c.sell_price,
+                _cost_price: c.cost_price,
+                _weight: c.weight
+              }
+              JSON.parse(c.spec_array).map((c) => {
+                proItem[c.id] = c.value
+                // 补充specList
+                const cur = specList.find((j) => j.id === c.id)
+                if (cur) {
+                  if (!cur.value.find((j) => j === c.value)) {
+                    cur.value.push(c.value)
+                  }
+                } else {
+                  specList.push({
+                    id: c.id,
+                    specName: c.name,
+                    value: [c.value]
+                  })
+                }
+              })
 
-            return proItem
-          })
+              return proItem
+            })
+          }
 
           console.log(product, specList)
 
@@ -591,8 +603,6 @@ export default {
             })
           )
         })
-
-        console.log(sendData)
         Object.assign(sendData, {
           _goods_no,
           _store_nums,
@@ -602,6 +612,11 @@ export default {
           _weight,
           _spec_array
         })
+        if (!_spec_array[0] || !_spec_array[0][0]) {
+          delete sendData._spec_array
+        }
+
+        console.log(sendData)
 
         this.btnLoading = true
         editGoodsInfo(sendData)

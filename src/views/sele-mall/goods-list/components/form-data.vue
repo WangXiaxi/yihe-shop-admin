@@ -492,37 +492,49 @@ export default {
               return { url: c.img }
             })
           const specList = []
-
-          const products = product.map((c) => {
-            const proItem = {
-              id: c.id,
-              _goods_no: c.products_no,
-              _store_nums: c.store_nums,
-              _market_price: c.market_price,
-              _sell_price: c.sell_price,
-              _cost_price: c.cost_price,
-              _point_price: c.point_price,
-              _weight: c.weight
+          let products = [
+            {
+              _goods_no: form.goods_no,
+              _store_nums: form.store_nums,
+              _market_price: form.market_price,
+              _sell_price: form.sell_price,
+              _cost_price: form.cost_price,
+              _point_price: form.point_price,
+              _weight: form.weight
             }
-            JSON.parse(c.spec_array).map((c) => {
-              proItem[c.id] = c.value
-              // 补充specList
-              const cur = specList.find((j) => j.id === c.id)
-              if (cur) {
-                if (!cur.value.find((j) => j === c.value)) {
-                  cur.value.push(c.value)
-                }
-              } else {
-                specList.push({
-                  id: c.id,
-                  specName: c.name,
-                  value: [c.value]
-                })
+          ]
+          if (product && product.length) {
+            products = product.map((c) => {
+              const proItem = {
+                id: c.id,
+                _goods_no: c.products_no,
+                _store_nums: c.store_nums,
+                _market_price: c.market_price,
+                _sell_price: c.sell_price,
+                _cost_price: c.cost_price,
+                _point_price: c.point_price,
+                _weight: c.weight
               }
-            })
+              JSON.parse(c.spec_array).map((c) => {
+                proItem[c.id] = c.value
+                // 补充specList
+                const cur = specList.find((j) => j.id === c.id)
+                if (cur) {
+                  if (!cur.value.find((j) => j === c.value)) {
+                    cur.value.push(c.value)
+                  }
+                } else {
+                  specList.push({
+                    id: c.id,
+                    specName: c.name,
+                    value: [c.value]
+                  })
+                }
+              })
 
-            return proItem
-          })
+              return proItem
+            })
+          }
 
           console.log(product, specList)
 
@@ -622,7 +634,9 @@ export default {
           _spec_array,
           _point_price
         })
-
+        if (!_spec_array[0] || !_spec_array[0][0]) {
+          delete sendData._spec_array
+        }
         this.btnLoading = true
         editGoodsInfo(sendData)
           .then((res) => {
