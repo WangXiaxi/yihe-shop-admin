@@ -21,10 +21,11 @@
               </el-radio-group>
             </el-form-item>
 
-            <el-form-item label="选择分类" prop="brand_id">
+            <el-form-item label="选择分类" prop="_goods_category">
               <admin-tree-select
+                :is-choose-last="true"
                 :options="options"
-                v-model="form.brand_id"
+                v-model="form._goods_category"
               ></admin-tree-select>
             </el-form-item>
 
@@ -355,7 +356,7 @@ const fields = {
   content: '',
   mainImage: '', // 主图
   images: [],
-  brand_id: '',
+  _goods_category: '',
   products: [
     {
       _goods_no: '',
@@ -452,7 +453,7 @@ export default {
       this.pageLoading = true
       getDetail({ id })
         .then((res) => {
-          const { form, goods_photo, product } = res
+          const { form, goods_photo, product, goods_category } = res
           this.pageLoading = false
           const {
             id,
@@ -465,8 +466,7 @@ export default {
             exp,
             img,
             content,
-            goods_no,
-            brand_id
+            goods_no
           } = form
           this.goodsNo = goods_no.split('-')[0]
           const _imgList = (goods_photo || [])
@@ -533,7 +533,7 @@ export default {
             content,
             specList,
             products,
-            brand_id
+            _goods_category: goods_category && goods_category[0]
           })
         })
         .catch(() => {
@@ -557,7 +557,7 @@ export default {
           products,
           content,
           specList,
-          brand_id
+          _goods_category
         } = this.form
         const sendData = {
           id,
@@ -575,7 +575,7 @@ export default {
             })
             .join(','),
           content,
-          brand_id,
+          _goods_category: _goods_category && [_goods_category],
           type: 'package'
         }
         const _goods_no = []

@@ -20,6 +20,10 @@ export default {
       type: String,
       default: ''
     },
+    isChooseLast: {
+      type: Boolean,
+      default: false
+    },
     options: {
       type: Array,
       default: () => {
@@ -63,6 +67,11 @@ export default {
   },
   methods: {
     handleNodeClick (data) {
+      if (this.isChooseLast) { // 只能选择末级
+        if (data.children && data.children.length) {
+          return
+        }
+      }
       this.$refs.selectTree.blur()
       this.$emit('input', data.id)
     }
