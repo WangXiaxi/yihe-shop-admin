@@ -149,6 +149,29 @@ export default {
             link: null
           }
         },
+
+        {
+          name: 'UserCenterBalance',
+          path: 'balance-list',
+          hidden: false,
+          component: 'user-center/balance-list/index',
+          meta: {
+            title: '余额变动日志',
+            noCache: false,
+            link: null
+          }
+        },
+        {
+          name: 'UserCenterBtq',
+          path: 'btq-list',
+          hidden: false,
+          component: 'user-center/btq-list/index',
+          meta: {
+            title: '版通券列表',
+            noCache: false,
+            link: null
+          }
+        },
         {
           name: 'UserCenterCard',
           path: 'card-list',

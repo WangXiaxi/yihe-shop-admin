@@ -48,7 +48,21 @@
             :width="item.realWidth"
           >
             <template slot-scope="{ row }">
-              <span>{{ row[item.name] | fill }}</span>
+              <div
+                v-if="
+                  ['front_img', 'back_img'].indexOf(item.name) > -1
+                "
+                class="goods-td"
+              >
+                <el-image
+                  class="goods-td-image"
+                  :src="row[item.name]"
+                  fit="contain"
+                  :preview-src-list="[row[item.name]]"
+                ></el-image>
+              </div>
+
+              <span v-else>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -83,8 +97,14 @@ export default {
       listQuery: cloneDeep(baseQuery),
       tableListText: [
         { name: 'username', text: '用户', width: '100' },
-        { name: 'intro', text: '内容', width: '500' },
-        { name: 'datetime', text: '创建时间', width: '200' }
+        { name: 'mobile', text: '手机号', width: '100' },
+        { name: 'card_num', text: '银行卡号', width: '100' },
+        { name: 'bank', text: '银行', width: '100' },
+        { name: 'bank_branch', text: '开户银行', width: '100' },
+
+        { name: 'front_img', text: '身份证正面', width: '100' },
+        { name: 'back_img', text: '身份证反面', width: '100' },
+        { name: 'time', text: '创建时间', width: '200' }
       ],
       btnLoading: false,
       addDialog: {
@@ -117,14 +137,14 @@ export default {
       list(sendData)
         .then((res) => {
           this.agLoading = false
-          const { data, totalPage } = res
+          const { data, total } = res
           Object.assign(this, {
             selectRowData: [],
             gridList: (data || []).map((c) => {
               c.btnLoading = false
               return this.handleData(c)
             }),
-            total: totalPage
+            total: total
           })
         })
         .catch(() => {

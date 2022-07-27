@@ -67,7 +67,7 @@
 
 <script>
 import { cloneDeep } from 'lodash'
-import { list } from '@/api/user-center/xjq-list'
+import { list } from '@/api/user-center/balance-list'
 import pagination from '@/mixins/pagination'
 
 const baseQuery = {
@@ -75,7 +75,7 @@ const baseQuery = {
 }
 
 export default {
-  name: 'UserCenterXjq',
+  name: 'UserCenterBalance',
   mixins: [pagination],
   props: {},
   data() {

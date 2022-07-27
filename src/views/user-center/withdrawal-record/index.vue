@@ -169,14 +169,11 @@ export default {
         })
         .catch(() => {})
     },
-    handleEdit(data) {
-      this.$router.push(`/user-center/user-list/page/edit/${data.user_id}`)
-    },
     handleUpdate(isEdit) {
       isEdit ? this.getList() : this.handleFilter()
     },
     handleAdd() {
-      this.$router.push('/user-center/user-list/page/add')
+      this.$message.warning('待开发')
     },
     handleReset() {
       Object.assign(this.listQuery, cloneDeep(baseQuery))
@@ -206,14 +203,14 @@ export default {
       list(sendData)
         .then((res) => {
           this.agLoading = false
-          const { data, totalPage } = res
+          const { data, total } = res
           Object.assign(this, {
             selectRowData: [],
             gridList: (data || []).map((c) => {
               c.btnLoading = false
               return this.handleData(c)
             }),
-            total: totalPage
+            total: total
           })
         })
         .catch(() => {

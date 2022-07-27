@@ -214,6 +214,7 @@ export default {
           city: city || city === 0 ? cityOptions[city].value : ''
         }
         this.btnLoading = true
+        delete sendData.time
         edit(sendData)
           .then((res) => {
             this.btnLoading = false
@@ -230,7 +231,7 @@ export default {
       const res = await getDetail({ uid: this.id })
       delete res.password
       this.pageLoading = false
-      const areas = res.area.split(',').filter((c) => !!c)
+      const areas = (res.area || '').split(',').filter((c) => !!c)
       Object.assign(this.form, res, {
         province: areas[0] || '',
         city: areas[1] || '',

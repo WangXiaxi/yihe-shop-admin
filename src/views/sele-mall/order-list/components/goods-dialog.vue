@@ -289,7 +289,7 @@ export default {
       getGoodsSearchList(sendData)
         .then((res) => {
           this.agLoading = false
-          const { data, totalPage } = res
+          const { data, total } = res
           Object.assign(this, {
             gridList: (data || []).map((c) => {
               c.goodsName = c.name
@@ -298,7 +298,7 @@ export default {
               c.btnLoading = false
               return this.handleData(c)
             }),
-            total: totalPage
+            total: total
           })
 
           this.setSelectRow()

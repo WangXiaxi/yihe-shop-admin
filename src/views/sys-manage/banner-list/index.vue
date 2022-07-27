@@ -198,13 +198,13 @@ export default {
       list(sendData)
         .then((res) => {
           this.agLoading = false
-          const { data, totalPage } = res
+          const { data, total } = res
           Object.assign(this, {
             selectRowData: [],
             gridList: (data || []).map((c) => {
               return this.handleData(c)
             }),
-            total: totalPage
+            total: total
           })
         })
         .catch(() => {
