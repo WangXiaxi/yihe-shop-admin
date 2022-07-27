@@ -83,8 +83,8 @@ export default {
       listQuery: cloneDeep(baseQuery),
       tableListText: [
         { name: 'username', text: '用户', width: '100' },
-        { name: 'intro', text: '内容', width: '500' },
-        { name: 'datetime', text: '创建时间', width: '200' }
+        { name: 'note', text: '内容', width: '500' },
+        { name: 'time', text: '创建时间', width: '200' }
       ],
       btnLoading: false,
       addDialog: {
