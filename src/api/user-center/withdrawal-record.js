@@ -9,12 +9,18 @@ export function list(data) {
   })
 }
 
-// 删除管理员
 export function dele(data) {
   return request({
-    url: '/service/deleSystemUser',
+    url: '/service/delSystemWithdrawByID',
     method: 'post',
     data
   })
 }
 
+export function withdrawBatchEdit(data) {
+  return request({
+    url: '/service/withdrawBatchEdit',
+    method: 'post',
+    data
+  })
+}

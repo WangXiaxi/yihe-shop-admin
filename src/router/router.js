@@ -277,6 +277,17 @@ export default {
           }
         },
         {
+          name: 'SysManageNotice',
+          path: 'notice-list',
+          hidden: false,
+          component: 'sys-manage/notice-list/index',
+          meta: {
+            title: '消息通知',
+            noCache: false,
+            link: null
+          }
+        },
+        {
           name: 'SysManageClass',
           path: 'class-list',
           hidden: false,
