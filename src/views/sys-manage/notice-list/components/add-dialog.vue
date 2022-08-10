@@ -6,13 +6,13 @@
     class="setting-dialog app-main"
     :title="textMap[info.isEdit]"
     v-el-drag-dialog
-    width="600px"
+    width="1000px"
   >
     <el-form
       :model="temp"
       :rules="rules"
       label-position="right"
-      label-width="110px"
+      label-width="60px"
       ref="dataForm"
       v-loading="pageLoading"
     >
@@ -31,16 +31,24 @@
         />
         <span
           class="avatar-uploader-tip"
-        >首页滚动文字：home;其他消息： notice</span>
+        >首页滚动文字：home;其他消息：notice;用户协议：agreement;隐私政策：privacy;</span>
       </el-form-item>
 
       <el-form-item label="内容" prop="content">
         <el-input
+          v-if="temp.type === 'home'"
           type="textarea"
           :maxlength="200"
           v-model="temp.content"
           placeholder="请输入内容"
         />
+
+        <admin-tinymce
+          v-if="temp.type !== 'home' && info.visible"
+          ref="editor"
+          :height="300"
+          v-model="temp.content"
+        ></admin-tinymce>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -57,6 +65,7 @@
 <script>
 import { cloneDeep } from 'lodash'
 import { edit } from '@/api/sys-manage/notice-list'
+import AdminTinymce from '@/components/admin-tinymce'
 
 const fields = {
   title: '', // 名称
@@ -64,6 +73,9 @@ const fields = {
   type: ''
 }
 export default {
+  components: {
+    AdminTinymce
+  },
   props: {
     info: {
       // 传入对象 方便父子组件传值
