@@ -16,6 +16,14 @@ export function getDetail(params) {
     params
   })
 }
+
+export function getSystemVipInfo(params) {
+  return request({
+    url: '/service/getSystemVipInfo',
+    method: 'get',
+    params
+  })
+}
 // 编辑会员
 export function edit(data) {
   return request({
@@ -33,3 +41,20 @@ export function dele(data) {
     data
   })
 }
+
+export function handleSpecialUserOrder(data) {
+  return request({
+    url: '/service/handleSpecialUserOrder',
+    method: 'post',
+    data
+  })
+}
+
+export function editSystemVipUser(data) {
+  return request({
+    url: '/service/editSystemVipUser',
+    method: 'post',
+    data
+  })
+}
+

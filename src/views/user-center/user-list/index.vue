@@ -70,7 +70,7 @@
               <span>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="120">
+          <el-table-column label="操作" fixed="right" width="250">
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <el-button
@@ -79,9 +79,25 @@
                   :loading="row.btnLoading"
                   @click="handleEdit(row)"
                 >编辑</el-button>
+
+                <el-button
+                  icon="el-icon-circle-plus-outline"
+                  type="text"
+                  :loading="row.btnLoading"
+                  @click="handlePack(row)"
+                >添加礼包</el-button>
+
+                <el-button
+                  icon="el-icon-menu"
+                  type="text"
+                  :loading="row.btnLoading"
+                  @click="handleAction(row)"
+                >操作</el-button>
+
                 <el-button
                   icon="el-icon-delete"
                   type="text"
+                  :loading="row.btnLoading"
                   @click="handleDele(row, 'single')"
                 >删除</el-button>
               </div>
@@ -98,13 +114,19 @@
         @change="handlePageChange"
       />
     </div>
+    <ActionDialog :info="actionDialog" @update="handleUpdate"></ActionDialog>
   </div>
 </template>
 
 <script>
 import { cloneDeep } from 'lodash'
-import { list, dele } from '@/api/user-center/user-list.js'
+import {
+  list,
+  dele,
+  handleSpecialUserOrder
+} from '@/api/user-center/user-list.js'
 import pagination from '@/mixins/pagination'
+import ActionDialog from './components/action-dialog.vue'
 
 const baseQuery = {
   type: 'username',
@@ -113,7 +135,9 @@ const baseQuery = {
 
 export default {
   name: 'UserCenterUser',
-  components: {},
+  components: {
+    ActionDialog
+  },
   mixins: [pagination],
   props: {},
   data() {
@@ -122,6 +146,9 @@ export default {
       tableListText: [
         { name: 'username', text: '用户名', width: '100' },
         { name: 'true_name', text: '姓名', width: '100' },
+        { name: 'identity_text', text: '身份', width: '100' },
+        { name: 'qualification_text', text: '资格', width: '100' },
+        { name: 'parent_name', text: '邀请人', width: '100' },
         { name: 'sexDesc', text: '性别', width: '100' },
         { name: 'balance', text: '预存款', width: '100' },
         { name: 'exp', text: '经验', width: '100' },
@@ -162,7 +189,10 @@ export default {
         { label: '用户名', key: 'username' },
         { label: '姓名', key: 'true_name' },
         { label: '手机号', key: 'mobile' }
-      ]
+      ],
+      actionDialog: {
+        visible: false
+      }
     }
   },
   computed: {},
@@ -174,9 +204,38 @@ export default {
     this.$bus.off('UserCenterUserUpdate')
   },
   methods: {
+    handleAction(item) {
+      Object.assign(this.actionDialog, {
+        visible: true,
+        data: item,
+        isEdit: 1
+      })
+    },
+    async handlePack(item) {
+      const content = '确定为当前用户添加礼包吗（无奖励）？'
+      await this.$confirm(content, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+      this.btnLoading = true
+      try {
+        await handleSpecialUserOrder({ user_id: item.user_id })
+        this.btnLoading = false
+
+        this.$message({
+          showClose: true,
+          message: `操作成功！`,
+          type: 'success'
+        })
+        this.handleFilter()
+      } catch (e) {
+        this.btnLoading = false
+      }
+    },
     handleDele(item, type = 'more') {
       const ids = (type === 'single' ? [item] : this.selectRowData)
-        .map((c) => c.id)
+        .map((c) => c.user_id)
         .join(',')
       const baseObj = { more: this, single: item }[type]
       const content = '确定删除当前后用户吗？'
@@ -222,6 +281,7 @@ export default {
       item.statusDesc = this.statusOptions.find(
         (c) => c.key === item.status
       )?.label
+      Object.assign(item, item.agent_text || {})
       return item
     },
     getList() {
