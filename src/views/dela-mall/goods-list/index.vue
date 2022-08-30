@@ -41,8 +41,16 @@
         >清空</el-button>
       </div>
       <div class="button-operation admin-mt-10">
-        <el-button type="primary" plain @click="handleAdd">添加商品</el-button>
         <el-button
+          v-if="permission('DelaMallGoods_add')"
+
+          type="primary"
+          plain
+          @click="handleAdd"
+        >添加商品</el-button>
+        <el-button
+          v-if="permission('DelaMallGoods_del')"
+
           :disabled="disabled"
           :loading="btnLoading"
           type="primary"
@@ -50,6 +58,8 @@
           @click="handleDele()"
         >批量删除</el-button>
         <el-button
+          v-if="permission('DelaMallGoods_status')"
+
           :disabled="disabled"
           :loading="btnLoading"
           type="primary"
@@ -97,6 +107,8 @@
 
               <div v-else-if="item.name === 'status'">
                 <el-select
+                  v-if="permission('DelaMallGoods_status')"
+
                   v-model="row.is_del"
                   placeholder="请选择"
                   @change="handleChangeDel(row)"
@@ -109,9 +121,12 @@
                   >
                   </el-option>
                 </el-select>
+                <span v-else>{{ row.statusDesc | fill }}</span>
+
               </div>
 
-              <div v-else-if="item.name === 'sort'">
+              <div v-else-if="item.name === 'sort' && permission('DelaMallGoods_sort')">
+
                 <input-cleave
                   v-model="row.sort"
                   placeholder="排序"
@@ -122,7 +137,12 @@
               <span v-else>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="90">
+          <el-table-column
+            label="操作"
+            fixed="right"
+            width="90"
+            v-if="permission('DelaMallGoods_edit') || permission('DelaMallGoods_dele')"
+          >
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <!-- <el-button
@@ -132,6 +152,8 @@
                   @click="handleEdit(row)"
                 >更改价格</el-button> -->
                 <el-button
+                  v-if="permission('DelaMallGoods_edit')"
+
                   icon="el-icon-edit"
                   type="text"
                   :loading="row.btnLoading"
@@ -139,6 +161,8 @@
                 >编辑</el-button>
 
                 <el-button
+                  v-if="permission('DelaMallGoods_dele')"
+
                   style="margin-left: 0"
                   icon="el-icon-delete"
                   type="text"
@@ -167,6 +191,8 @@
 import { cloneDeep } from 'lodash'
 import { list, dele, editGoodsStatus, editGoodsSortByID } from '@/api/free-mall/goods-list'
 import pagination from '@/mixins/pagination'
+import auth from '@/mixins/auth'
+
 import StatusDialog from './components/status-dialog.vue'
 
 const baseQuery = {
@@ -177,7 +203,8 @@ const baseQuery = {
 export default {
   name: 'DelaMallGoods',
   components: { StatusDialog },
-  mixins: [pagination],
+  mixins: [pagination, auth],
+
   props: {},
   data() {
     return {
@@ -308,6 +335,7 @@ export default {
             gridList: (data || []).map((c) => {
               c.goodsNoDesc = c.goods_no.split('-')[0]
               c.id = c.goods_id
+              c.statusDesc = this.statusOptions.find(j => j.key === c.is_del)?.label
               c.btnLoading = false
               return this.handleData(c)
             }),

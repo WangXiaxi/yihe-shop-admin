@@ -1,4 +1,4 @@
-import auth from '@/plugins/auth'
+// import auth from '@/plugins/auth'
 import router, { constantRoutes, dynamicRoutes } from '@/router'
 // import { getRouters } from '@/api/menu'
 import Layout from '@/layout/index'
@@ -115,16 +115,18 @@ function filterChildren(childrenMap, lastRouter = false) {
 export function filterDynamicRoutes(routes) {
   const res = []
   routes.forEach(route => {
-    if (route.permissions) {
-      if (auth.hasPermiOr(route.permissions)) {
-        res.push(route)
-      }
-    } else if (route.roles) {
-      if (auth.hasRoleOr(route.roles)) {
-        res.push(route)
-      }
-    }
+    // if (route.permissions) {
+    //   if (auth.hasPermiOr(route.permissions)) {
+    //     res.push(route)
+    //   }
+    // } else if (route.roles) {
+    //   if (auth.hasRoleOr(route.roles)) {
+    //     res.push(route)
+    //   }
+    // }
+    res.push(route)
   })
+
   return res
 }
 

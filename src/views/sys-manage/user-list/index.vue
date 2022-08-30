@@ -28,6 +28,8 @@
       <div class="button-operation">
         <!-- admin-mt-10 -->
         <el-button
+          v-if="permission('SysManageUser_add')"
+
           type="primary"
           plain
           @click="handleAdd"
@@ -64,16 +66,25 @@
               <span>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="120">
+          <el-table-column
+            v-if="permission('SysManageUser_edit') || permission('SysManageUser_dele')"
+            label="操作"
+            fixed="right"
+            width="120"
+          >
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <el-button
+                  v-if="permission('SysManageUser_edit')"
+
                   icon="el-icon-edit"
                   type="text"
                   :loading="row.btnLoading"
                   @click="handleEdit(row)"
                 >编辑</el-button>
                 <el-button
+                  v-if="permission('SysManageUser_dele')"
+
                   icon="el-icon-delete"
                   type="text"
                   :loading="row.btnLoading"
@@ -101,7 +112,7 @@
 import { cloneDeep } from 'lodash'
 import { list, dele } from '@/api/sys-manage/user-list'
 import pagination from '@/mixins/pagination'
-
+import auth from '@/mixins/auth'
 import AddDialog from './components/add-dialog.vue'
 
 const baseQuery = {}
@@ -109,7 +120,7 @@ const baseQuery = {}
 export default {
   name: 'SysManageUser',
   components: { AddDialog },
-  mixins: [pagination],
+  mixins: [pagination, auth],
   props: {},
   data() {
     return {

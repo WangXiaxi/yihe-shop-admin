@@ -141,11 +141,12 @@ export default {
   methods: {
     handleDetail(row) {
      const typeUrl = {
-      free: `/free-mall/order-list/page/detail/${row.id}`,
-      preference: `/sele-mall/order-list/page/detail/${row.id}`,
-      package: `/dela-mall/order-list/page/detail/${row.id}`
+      free: `/free-mall/order-list/page/detail/${row.oid}`,
+      preference: `/sele-mall/order-list/page/detail/${row.oid}`,
+      package: `/dela-mall/order-list/page/detail/${row.oid}`
      }
-     this.goUrl(typeUrl[row.type])
+     console.log(typeUrl[row.goods_type])
+     this.goUrl(typeUrl[row.goods_type])
     },
     async getList() {
       const res = await list()
@@ -155,8 +156,8 @@ export default {
       this.gridList = res.newOrderList
     },
     // 跳转
-    goUrl(name, query) {
-      this.$router.push({ name, query })
+    goUrl(path) {
+      this.$router.push(path)
     }
   }
 }

@@ -166,8 +166,15 @@
         ></i>
       </div>
       <div class="button-operation admin-mt-10">
-        <el-button type="primary" plain @click="handleAdd">添加订单</el-button>
         <el-button
+          v-if="permission('DelaMallOrder_add')"
+          type="primary"
+          plain
+          @click="handleAdd"
+        >添加订单</el-button>
+        <el-button
+          v-if="permission('DelaMallOrder_dele')"
+
           :disabled="disabled"
           :loading="btnLoading"
           type="primary"
@@ -209,21 +216,31 @@
               <span>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="180">
+          <el-table-column
+            label="操作"
+            fixed="right"
+            width="180"
+            v-if="permission('DelaMallOrder_detail') || permission('DelaMallOrder_edit')||permission('DelaMallOrder_dele')"
+          >
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <el-button
+                  v-if="permission('DelaMallOrder_detail')"
+
                   icon="el-icon-view"
                   type="text"
                   @click="handleDetail(row)"
                 >查看</el-button>
                 <el-button
+                  v-if="permission('DelaMallOrder_edit')"
+
                   icon="el-icon-edit"
                   type="text"
                   :loading="row.btnLoading"
                   @click="handleEdit(row)"
                 >编辑</el-button>
                 <el-button
+                  v-if="permission('DelaMallOrder_dele')"
                   icon="el-icon-delete"
                   type="text"
                   @click="handleDele(row, 'single')"
@@ -249,6 +266,7 @@
 import { cloneDeep } from 'lodash'
 import { list, dele } from '@/api/free-mall/order-list.js'
 import pagination from '@/mixins/pagination'
+import auth from '@/mixins/auth'
 
 const baseQuery = {
   type: 'order_no',
@@ -264,9 +282,9 @@ const baseQuery = {
 }
 
 export default {
-  name: 'DelaMallGoods',
+  name: 'DelaMallOrder',
   components: {},
-  mixins: [pagination],
+  mixins: [pagination, auth],
   props: {},
   data() {
     return {

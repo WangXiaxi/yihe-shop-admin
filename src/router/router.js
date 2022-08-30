@@ -113,7 +113,6 @@ export default {
         }
       ]
     },
-
     {
       path: '/user-center',
       name: 'UserCenter',
@@ -228,7 +227,8 @@ export default {
           }
         }
       ]
-    }, {
+    },
+    {
       path: '/sys-manage',
       name: 'SysManage',
       redirect: 'goods-list',

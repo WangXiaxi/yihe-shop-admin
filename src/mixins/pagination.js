@@ -59,11 +59,6 @@ export default {
         this.tableHeight = this.$refs.gridList.clientHeight
       }
     },
-    // 按钮权限
-    permission(val) {
-      // 生产环境才执行
-      return process.env.VUE_APP_PERMISSION === 'true' ? this.permissions[val] : true
-    },
     onSortChanged(row) { // 排序操作
     },
     // 行选择或取消选择

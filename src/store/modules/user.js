@@ -57,7 +57,7 @@ const user = {
           commit('SET_USERINFO', res)
           commit('SET_NAME', res.admin_name)
           const user = { avatar: localStorage.getItem('hw-admin-avatar') } // res.user
-          const permissions = ['admin:public']
+          const permissions = []
           const avatar = !user.avatar ? require('@/assets/images/boy.png') : user.avatar
           // if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
           //   commit('SET_ROLES', res.roles)

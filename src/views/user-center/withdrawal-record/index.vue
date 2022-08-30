@@ -34,9 +34,9 @@
           icon="el-icon-refresh"
         >清空</el-button>
       </div>
-      <div class="button-operation admin-mt-10">
+      <!-- <div class="button-operation admin-mt-10">
         <el-button type="primary" plain @click="handleAdd">提现</el-button>
-      </div>
+      </div> -->
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
           class="grid-table"
@@ -63,10 +63,18 @@
               <span>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="120">
+          <el-table-column
+            v-if="permission('UserCenterWithdrawalRecord_agree') || permission('UserCenterWithdrawalRecord_dele')"
+
+            label="操作"
+            fixed="right"
+            width="120"
+          >
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <el-button
+                  v-if="permission('UserCenterWithdrawalRecord_agree')"
+
                   icon="el-icon-edit"
                   type="text"
                   :disabled="row.status !== '0'"
@@ -74,6 +82,8 @@
                   @click="handleSure(row)"
                 >同意</el-button>
                 <el-button
+                  v-if="permission('UserCenterWithdrawalRecord_dele')"
+
                   icon="el-icon-delete"
                   type="text"
                   @click="handleDele(row, 'single')"
@@ -103,6 +113,7 @@ import {
   withdrawBatchEdit
 } from '@/api/user-center/withdrawal-record.js'
 import pagination from '@/mixins/pagination'
+import auth from '@/mixins/auth'
 
 const baseQuery = {
   type: 'wait_status',
@@ -110,9 +121,9 @@ const baseQuery = {
 }
 
 export default {
-  name: 'UserCenterUser',
+  name: 'UserCenterWithdrawalRecord',
   components: {},
-  mixins: [pagination],
+  mixins: [pagination, auth],
   props: {},
   data() {
     return {

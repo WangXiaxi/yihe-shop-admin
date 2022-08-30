@@ -42,7 +42,13 @@
         >清空</el-button>
       </div>
       <div class="button-operation admin-mt-10">
-        <el-button type="primary" plain @click="handleAdd">添加会员</el-button>
+        <el-button
+          v-if="permission('UserCenterUser_add')"
+
+          type="primary"
+          plain
+          @click="handleAdd"
+        >添加会员</el-button>
       </div>
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
@@ -70,10 +76,17 @@
               <span>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="250">
+          <el-table-column
+            v-if="permission('UserCenterUser_edit') || permission('UserCenterUser_pack') || permission('UserCenterUser_handle') || permission('UserCenterUser_dele')"
+            label="操作"
+            fixed="right"
+            width="250"
+          >
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <el-button
+                  v-if="permission('UserCenterUser_edit')"
+
                   icon="el-icon-edit"
                   type="text"
                   :loading="row.btnLoading"
@@ -81,6 +94,8 @@
                 >编辑</el-button>
 
                 <el-button
+                  v-if="permission('UserCenterUser_pack')"
+
                   icon="el-icon-circle-plus-outline"
                   type="text"
                   :loading="row.btnLoading"
@@ -88,6 +103,8 @@
                 >添加礼包</el-button>
 
                 <el-button
+                  v-if="permission('UserCenterUser_handle')"
+
                   icon="el-icon-menu"
                   type="text"
                   :loading="row.btnLoading"
@@ -95,6 +112,8 @@
                 >操作</el-button>
 
                 <el-button
+                  v-if="permission('UserCenterUser_dele')"
+
                   icon="el-icon-delete"
                   type="text"
                   :loading="row.btnLoading"
@@ -126,6 +145,8 @@ import {
   handleSpecialUserOrder
 } from '@/api/user-center/user-list.js'
 import pagination from '@/mixins/pagination'
+import auth from '@/mixins/auth'
+
 import ActionDialog from './components/action-dialog.vue'
 
 const baseQuery = {
@@ -138,7 +159,7 @@ export default {
   components: {
     ActionDialog
   },
-  mixins: [pagination],
+  mixins: [pagination, auth],
   props: {},
   data() {
     return {

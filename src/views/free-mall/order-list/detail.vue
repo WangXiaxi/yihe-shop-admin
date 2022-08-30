@@ -3,30 +3,39 @@
     <div class="detail-top-container">
       <div class="button-operation">
         <el-button
+          v-if="permission('FreeMallOrder_pay')"
           :disabled="!btns.to_pay"
           type="primary"
           plain
           @click="handlePay"
         >支付</el-button>
         <el-button
+          v-if="permission('FreeMallOrder_send')"
+
           :disabled="!btns.to_deliver"
           type="primary"
           plain
           @click="handleSend"
         >发货</el-button>
         <el-button
+          v-if="permission('FreeMallOrder_return')"
+
           :disabled="!btns.to_refundment"
           type="primary"
           plain
           @click="handleReturn"
         >退款</el-button>
         <el-button
+          v-if="permission('FreeMallOrder_finish')"
+
           :disabled="!btns.to_finish"
           type="primary"
           plain
           @click="handleFinish"
         >完成</el-button>
         <el-button
+          v-if="permission('FreeMallOrder_cancel')"
+
           :disabled="!btns.to_cancel"
           type="primary"
           plain
@@ -367,8 +376,11 @@ import {
 import PayDialog from './components/pay-dialog.vue'
 import SendDialog from './components/send-dialog.vue'
 import ReturnDialog from './components/return-dialog.vue'
+import auth from '@/mixins/auth'
+
 export default {
   name: 'FreeMallOrderDetail',
+  mixins: [auth],
   components: {
     PayDialog,
     SendDialog,
