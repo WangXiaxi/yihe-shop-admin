@@ -151,8 +151,11 @@ export default {
         { name: 'parent_name', text: '邀请人', width: '100' },
         { name: 'sexDesc', text: '性别', width: '100' },
         { name: 'balance', text: '预存款', width: '100' },
-        { name: 'exp', text: '经验', width: '100' },
-        { name: 'point', text: '积分', width: '100' },
+        { name: 'point', text: '版通券', width: '100' },
+        { name: 'btpoint', text: '版通积分', width: '100' },
+        { name: 'xjq', text: '现金券', width: '100' },
+        { name: 'sur_plus', text: '筹备金', width: '100' },
+        { name: 'package_plus', text: '复消券', width: '100' },
         { name: 'statusDesc', text: '状态', width: '100' },
         { name: 'time', text: '注册日期', width: '100' },
         { name: 'mobile', text: '手机', width: '100' }

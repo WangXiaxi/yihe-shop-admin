@@ -44,7 +44,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column label="购买成功增加积分">
+                <el-table-column label="购买成功增加版通券">
                   <template slot-scope="{}">
                     <el-form-item label="" prop="point">
                       <input-cleave
@@ -56,7 +56,7 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column label="购买成功增加经验">
+                <!-- <el-table-column label="购买成功增加经验">
                   <template slot-scope="{}">
                     <el-form-item label="" prop="exp">
                       <input-cleave
@@ -66,7 +66,7 @@
                       ></input-cleave>
                     </el-form-item>
                   </template>
-                </el-table-column>
+                </el-table-column> -->
               </el-table>
             </el-form-item>
 

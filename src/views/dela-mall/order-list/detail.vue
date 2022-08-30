@@ -231,13 +231,13 @@
                   <div class="item-value">{{ detail.payment | fill }}</div>
                 </div>
                 <div class="item">
-                  <div class="item-label">可得积分:</div>
+                  <div class="item-label">可得版通券:</div>
                   <div class="item-value">{{ detail.point | fill }}</div>
                 </div>
-                <div class="item">
+                <!-- <div class="item">
                   <div class="item-label">可得经验:</div>
                   <div class="item-value">{{ detail.exp | fill }}</div>
-                </div>
+                </div> -->
               </div>
             </div></el-col>
 

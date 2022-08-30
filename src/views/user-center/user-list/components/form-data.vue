@@ -38,20 +38,20 @@
             <el-form-item label="手机" prop="mobile">
               <el-input v-model="form.mobile" clearable></el-input>
             </el-form-item>
-            <el-form-item label="积分" prop="point">
+            <el-form-item label="版通券" prop="point">
               <input-cleave
                 :is-decimal="2"
                 v-model="form.point"
                 clearable
               ></input-cleave>
             </el-form-item>
-            <el-form-item label="经验值" prop="exp">
+            <!-- <el-form-item label="经验值" prop="exp">
               <input-cleave
                 :is-decimal="2"
                 v-model="form.exp"
                 clearable
               ></input-cleave>
-            </el-form-item>
+            </el-form-item> -->
 
             <el-form-item label="状态">
               <el-select

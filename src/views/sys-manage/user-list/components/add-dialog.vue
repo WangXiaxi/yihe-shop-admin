@@ -52,7 +52,21 @@
           placeholder="请输入确认密码"
         />
       </el-form-item>
+
+      <el-form-item label="选择角色" prop="roles">
+        <el-select v-model="temp.roles" multiple placeholder="请选择" style="width: 100%;">
+          <el-option
+            v-for="item in rolesOptions"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
+
     </el-form>
+
     <div slot="footer" class="dialog-footer">
       <el-button @click.native="handleClose">取 消</el-button>
       <el-button
@@ -67,12 +81,14 @@
 <script>
 import { cloneDeep } from 'lodash'
 import { edit } from '@/api/sys-manage/user-list'
+import { list } from '@/api/menu-manage/roles-list'
 
 const fields = {
   admin_name: '',
   email: '',
   password: '',
-  repassword: ''
+  repassword: '',
+  roles: []
 }
 export default {
   components: {},
@@ -95,7 +111,8 @@ export default {
         ],
         password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
         repassword: [{ required: true, message: '请确认密码', trigger: 'blur' }]
-      }
+      },
+      rolesOptions: []
     }
   },
   watch: {
@@ -103,22 +120,32 @@ export default {
       // 用监听变化 来控制是获取数据还是清除 比用方法触发更加集中化
       if (n) {
         this.getdetail()
+        this.getRoles()
       } else {
         setTimeout(this.cleared, 300)
       }
     }
   },
+  created() {
+    this.getRoles()
+  },
   methods: {
+    async getRoles() {
+      const res = await list()
+      console.log(res)
+      this.rolesOptions = res
+    },
     handleSure() {
       this.$refs.dataForm.validate((v) => {
         if (!v) return
-        const { id, admin_name, email, password, repassword } = this.temp
+        const { id, admin_name, email, password, repassword, roles } = this.temp
         const sendData = {
           id,
           admin_name,
           email,
           password,
-          repassword
+          repassword,
+          role_id: roles.join(',')
         }
 
         this.btnLoading = true
@@ -141,11 +168,12 @@ export default {
     getdetail() {
       const { isEdit, data } = this.info
       if (isEdit) {
-        const { id, admin_name, email } = data
+        const { id, admin_name, email, role_id: roles } = data
         Object.assign(this.temp, {
           id,
           admin_name,
-          email
+          email,
+          roles: roles && roles.split(',')
         })
       }
     },
