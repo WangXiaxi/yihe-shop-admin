@@ -26,7 +26,13 @@
         >清空</el-button>
       </div> -->
       <div class="button-operation">
-        <el-button type="primary" plain @click="handleAdd">添加</el-button>
+        <el-button
+
+          v-if="permission('SysManageBanner_add')"
+          type="primary"
+          plain
+          @click="handleAdd"
+        >添加</el-button>
       </div>
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
@@ -63,16 +69,25 @@
               <span v-else>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="120">
+          <el-table-column
+            v-if="permission('SysManageBanner_edit') || permission('SysManageBanner_dele')"
+            label="操作"
+            fixed="right"
+            width="120"
+          >
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <el-button
+                  v-if="permission('SysManageBanner_edit')"
+
                   icon="el-icon-edit"
                   type="text"
                   :loading="row.btnLoading"
                   @click="handleEdit(row)"
                 >编辑</el-button>
                 <el-button
+                  v-if="permission('SysManageBanner_dele')"
+
                   :loading="row.btnLoading"
                   icon="el-icon-delete"
                   type="text"
@@ -101,6 +116,7 @@ import { cloneDeep } from 'lodash'
 import pagination from '@/mixins/pagination'
 import { list, dele } from '@/api/sys-manage/banner-list'
 import AddDialog from './components/add-dialog.vue'
+import auth from '@/mixins/auth'
 
 const baseQuery = {
   name: '' // 规格名称
@@ -109,7 +125,7 @@ const baseQuery = {
 export default {
   name: 'SysManageBanner',
   components: { AddDialog },
-  mixins: [pagination],
+  mixins: [pagination, auth],
   props: {},
   data() {
     return {

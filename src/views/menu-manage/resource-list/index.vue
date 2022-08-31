@@ -3,7 +3,12 @@
     <div class="grid-body" flex="dir:top">
       <div class="button-operation">
         <!-- admin-mt-10 -->
-        <el-button type="primary" plain @click="handleAdd">添加顶级资源</el-button>
+        <el-button
+          v-if="permission('MenuManageResource_add')"
+          type="primary"
+          plain
+          @click="handleAdd"
+        >添加顶级资源</el-button>
       </div>
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
@@ -34,23 +39,33 @@
               <span>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="180">
+          <el-table-column
+            v-if="permission('MenuManageResource_add') || permission('MenuManageResource_edit') || permission('MenuManageResource_dele')"
+            label="操作"
+            fixed="right"
+            width="180"
+          >
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <el-button
+                  v-if="row.type === '0' && permission('MenuManageResource_add')"
+
                   icon="el-icon-plus"
                   type="text"
                   :loading="row.btnLoading"
-                  v-if="row.type === '0'"
                   @click="handleAdd(row)"
                 >添加</el-button>
                 <el-button
+                  v-if="permission('MenuManageResource_edit')"
+
                   icon="el-icon-edit"
                   type="text"
                   :loading="row.btnLoading"
                   @click="handleEdit(row)"
                 >编辑</el-button>
                 <el-button
+                  v-if="permission('MenuManageResource_dele')"
+
                   icon="el-icon-delete"
                   type="text"
                   :loading="row.btnLoading"
@@ -76,13 +91,14 @@ import { list, dele } from '@/api/menu-manage/resource-list'
 import pagination from '@/mixins/pagination'
 
 import AddDialog from './components/add-dialog.vue'
+import auth from '@/mixins/auth'
 
 const baseQuery = {}
 
 export default {
   name: 'MenuManageResource',
   components: { AddDialog },
-  mixins: [pagination],
+  mixins: [pagination, auth],
   props: {},
   data() {
     return {

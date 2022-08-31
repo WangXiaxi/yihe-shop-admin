@@ -14,7 +14,7 @@
           :height="tableHeight"
           :row-height="55"
           tooltip-effect="dark"
-          @selection-change="onRowSelected"
+          @select="onRowSelected"
           v-loading="agLoading"
         >
           <el-table-column
@@ -98,8 +98,27 @@ export default {
         }
       })
     },
-    onRowSelected(row) {
+    onRowSelected(row, item) {
+      const isAdd = row.length > this.selectRowData.length
       this.selectRowData = row
+      const calle = (cur) => {
+        if (cur.children) {
+          this.$nextTick(() => {
+            cur.children.map(c => {
+              this.$refs.multipleTable.toggleRowSelection(c, isAdd)
+              const index = this.selectRowData.findIndex(j => j.id === c.id)
+              if (isAdd && index === -1) {
+                this.selectRowData.push(c)
+              }
+              if (!isAdd && index > -1) {
+                this.selectRowData.splice(index, 1)
+              }
+              calle(c)
+            })
+          })
+        }
+      }
+      calle(item)
     },
     handleData(item) {
       item.btnLoading = false

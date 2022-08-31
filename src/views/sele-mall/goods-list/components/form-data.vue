@@ -250,6 +250,8 @@
               </el-form-item>
 
               <el-button
+                v-if="permission('SysManageSpec_add')"
+
                 @click="handleCreateSpec"
                 type="primary"
                 class="ml10"
@@ -359,6 +361,7 @@ import {
 import AddDialog from '../../../sys-manage/spec-list/components/add-dialog.vue'
 import { getCategoryList } from '@/api/sys-manage/class-list'
 import AdminTreeSelect from '@/components/admin-tree-select'
+import auth from '@/mixins/auth'
 
 import { cloneDeep } from 'lodash'
 const fields = {
@@ -389,6 +392,8 @@ const fields = {
   specValue: ''
 }
 export default {
+  mixins: [auth],
+
   components: {
     AdminUpload,
     AdminTinymce,

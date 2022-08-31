@@ -83,7 +83,7 @@ export const dynamicRoutes = [
     path: '/free-mall/goods-list/page',
     component: Layout,
     hidden: true,
-    permissions: ['admin:public'],
+
     children: [
       {
         path: 'add',
@@ -103,7 +103,7 @@ export const dynamicRoutes = [
     path: '/free-mall/order-list/page',
     component: Layout,
     hidden: true,
-    permissions: ['admin:public'],
+
     children: [
       {
         path: 'add',
@@ -129,7 +129,7 @@ export const dynamicRoutes = [
     path: '/sele-mall/goods-list/page',
     component: Layout,
     hidden: true,
-    permissions: ['admin:public'],
+
     children: [
       {
         path: 'add',
@@ -149,7 +149,7 @@ export const dynamicRoutes = [
     path: '/sele-mall/order-list/page',
     component: Layout,
     hidden: true,
-    permissions: ['admin:public'],
+
     children: [
       {
         path: 'add',
@@ -175,7 +175,7 @@ export const dynamicRoutes = [
     path: '/dela-mall/goods-list/page',
     component: Layout,
     hidden: true,
-    permissions: ['admin:public'],
+
     children: [
       {
         path: 'add',
@@ -195,7 +195,7 @@ export const dynamicRoutes = [
     path: '/dela-mall/order-list/page',
     component: Layout,
     hidden: true,
-    permissions: ['admin:public'],
+
     children: [
       {
         path: 'add',
@@ -221,7 +221,7 @@ export const dynamicRoutes = [
     path: '/user-center/user-list/page',
     component: Layout,
     hidden: true,
-    permissions: ['admin:public'],
+
     children: [
       {
         path: 'add',
@@ -241,7 +241,7 @@ export const dynamicRoutes = [
     path: '/sys-manage/spec-list/page',
     component: Layout,
     hidden: true,
-    permissions: ['admin:public'],
+
     children: [
       {
         path: 'return',

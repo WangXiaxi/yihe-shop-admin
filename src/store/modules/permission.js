@@ -4,7 +4,7 @@ import router, { constantRoutes, dynamicRoutes } from '@/router'
 import Layout from '@/layout/index'
 import ParentView from '@/components/ParentView'
 import InnerLink from '@/layout/components/InnerLink'
-import routerJson from '../../router/router'
+// import routerJson from '../../router/router'
 
 const permission = {
   state: {
@@ -36,11 +36,10 @@ const permission = {
   },
   actions: {
     // 生成路由
-    GenerateRoutes({ commit }) {
+    GenerateRoutes({ commit }, res) {
       return new Promise(resolve => {
         // 向后端请求路由数据
-        const res = routerJson
-        // getRouters().then(res => {
+        // const res = routerJson
         const sdata = JSON.parse(JSON.stringify(res.data))
         const rdata = JSON.parse(JSON.stringify(res.data))
         const sidebarRoutes = filterAsyncRouter(sdata)
@@ -53,7 +52,6 @@ const permission = {
         commit('SET_DEFAULT_ROUTES', sidebarRoutes)
         commit('SET_TOPBAR_ROUTES', sidebarRoutes)
         resolve(rewriteRoutes)
-        // })
       })
     }
   }

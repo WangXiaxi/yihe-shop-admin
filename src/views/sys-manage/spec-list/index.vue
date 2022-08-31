@@ -26,8 +26,16 @@
         >清空</el-button>
       </div>
       <div class="button-operation admin-mt-10">
-        <el-button type="primary" plain @click="handleAdd">添加规格</el-button>
         <el-button
+          v-if="permission('SysManageSpec_add')"
+
+          type="primary"
+          plain
+          @click="handleAdd"
+        >新建规格</el-button>
+        <el-button
+          v-if="permission('SysManageSpec_dele')"
+
           :loading="btnLoading"
           type="primary"
           plain
@@ -61,16 +69,26 @@
               <span>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="120">
+          <el-table-column
+            v-if="permission('SysManageSpec_edit') || permission('SysManageSpec_dele')"
+
+            label="操作"
+            fixed="right"
+            width="120"
+          >
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <el-button
+                  v-if="permission('SysManageSpec_edit')"
+
                   icon="el-icon-edit"
                   type="text"
                   :loading="row.btnLoading"
                   @click="handleEdit(row)"
                 >编辑</el-button>
                 <el-button
+                  v-if="permission('SysManageSpec_dele')"
+
                   :loading="row.btnLoading"
                   icon="el-icon-delete"
                   type="text"
@@ -98,6 +116,7 @@
 import { cloneDeep } from 'lodash'
 import pagination from '@/mixins/pagination'
 import { list, dele } from '@/api/sys-manage/spec-list'
+import auth from '@/mixins/auth'
 import AddDialog from './components/add-dialog.vue'
 
 const baseQuery = {
@@ -107,7 +126,7 @@ const baseQuery = {
 export default {
   name: 'SysManageSpec',
   components: { AddDialog },
-  mixins: [pagination],
+  mixins: [pagination, auth],
   props: {},
   data() {
     return {

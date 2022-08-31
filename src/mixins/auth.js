@@ -2,7 +2,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   computed: {
-    ...mapGetters('admin/user', ['permissions'])
+    ...mapGetters(['permissions'])
   },
   methods: {
     // 按钮权限

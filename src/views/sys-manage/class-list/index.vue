@@ -3,7 +3,12 @@
     <div class="grid-body" flex="dir:top">
       <div class="button-operation">
         <!-- admin-mt-10 -->
-        <el-button type="primary" plain @click="handleAdd">添加分类</el-button>
+        <el-button
+          v-if="permission('SysManageClass_add')"
+          type="primary"
+          plain
+          @click="handleAdd"
+        >添加分类</el-button>
       </div>
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
@@ -33,10 +38,12 @@
             <template slot-scope="{ row }">
               <div v-if="item.name === 'sort'">
                 <input-cleave
+                  v-if="permission('SysManageClass_sort')"
                   v-model="row.sort"
                   placeholder="排序"
                   @blur="handleSort(row)"
                 ></input-cleave>
+                <span v-else>{{ row.sort }}}</span>
               </div>
               <div v-else-if="item.name === 'img'" class="goods-td">
                 <el-image
@@ -50,16 +57,25 @@
               <span v-else>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="120">
+          <el-table-column
+            v-if="permission('SysManageClass_edit') || permission('SysManageClass_dele')"
+            label="操作"
+            fixed="right"
+            width="120"
+          >
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <el-button
+                  v-if="permission('SysManageClass_edit')"
+
                   icon="el-icon-edit"
                   type="text"
                   :loading="row.btnLoading"
                   @click="handleEdit(row)"
                 >编辑</el-button>
                 <el-button
+                  v-if="permission('SysManageClass_dele')"
+
                   icon="el-icon-delete"
                   type="text"
                   :loading="row.btnLoading"
@@ -85,13 +101,14 @@ import { getCategoryList, dele, edit } from '@/api/sys-manage/class-list'
 import pagination from '@/mixins/pagination'
 
 import AddDialog from './components/add-dialog.vue'
+import auth from '@/mixins/auth'
 
 const baseQuery = {}
 
 export default {
   name: 'SysManageClass',
   components: { AddDialog },
-  mixins: [pagination],
+  mixins: [pagination, auth],
   props: {},
   data() {
     return {

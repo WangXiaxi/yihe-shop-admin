@@ -1,5 +1,7 @@
 import { login, getInfo } from '@/api/login'
 import util from '@/utils/auth'
+import { cloneDeep } from 'lodash'
+import routerJson from '../../router/router'
 
 const user = {
   state: {
@@ -7,7 +9,7 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
-    permissions: [],
+    permissions: {},
     userInfo: {}
   },
 
@@ -57,16 +59,34 @@ const user = {
           commit('SET_USERINFO', res)
           commit('SET_NAME', res.admin_name)
           const user = { avatar: localStorage.getItem('hw-admin-avatar') } // res.user
-          const permissions = []
+
+          const permissions = {}
+          res.permission.filter(c => c.type === '1').map(c => {
+            permissions[c.name] = true
+          })
+
           const avatar = !user.avatar ? require('@/assets/images/boy.png') : user.avatar
-          // if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-          //   commit('SET_ROLES', res.roles)
           commit('SET_PERMISSIONS', permissions)
-          // } else {
           commit('SET_ROLES', ['ROLE_DEFAULT'])
-          // }
           commit('SET_AVATAR', avatar)
-          resolve('success')
+
+          // 路由过滤
+          const baseRes = cloneDeep(routerJson)
+          const allMenu = baseRes.data
+          const needMenu = res.permission.filter(c => c.type === '0')
+
+          // 过滤掉不需要路由
+          const calle = (li) => {
+            return li.filter(c => {
+              const need = needMenu.find(j => j.right === c.name)
+              if (need) {
+                c.children = c.children && calle(c.children)
+              }
+              return need
+            })
+          }
+          baseRes.data = calle(allMenu)
+          resolve(baseRes)
         })
       })
     },

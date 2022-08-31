@@ -4,6 +4,8 @@
       <div class="button-operation">
         <!-- admin-mt-10 -->
         <el-button
+          v-if="permission('MenuManageRoles_add')"
+
           type="primary"
           plain
           @click="handleAdd"
@@ -40,16 +42,26 @@
               <span>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="200">
+          <el-table-column
+            v-if="permission('MenuManageRoles_auth') || permission('MenuManageRoles_edit')"
+
+            label="操作"
+            fixed="right"
+            width="200"
+          >
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <el-button
+                  v-if="permission('MenuManageRoles_auth')"
+
                   icon="el-icon-s-grid"
                   type="text"
                   :loading="row.btnLoading"
                   @click="handleAuth(row)"
                 >分配资源</el-button>
                 <el-button
+                  v-if="permission('MenuManageRoles_edit')"
+
                   icon="el-icon-edit"
                   type="text"
                   :loading="row.btnLoading"
@@ -87,13 +99,14 @@ import pagination from '@/mixins/pagination'
 
 import AddDialog from './components/add-dialog.vue'
 import EditDialog from './components/edit-dialog.vue'
+import auth from '@/mixins/auth'
 
 const baseQuery = {}
 
 export default {
   name: 'MenuManageRoles',
   components: { AddDialog, EditDialog },
-  mixins: [pagination],
+  mixins: [pagination, auth],
   props: {},
   data() {
     return {
