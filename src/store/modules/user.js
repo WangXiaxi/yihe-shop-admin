@@ -62,7 +62,7 @@ const user = {
 
           const permissions = {}
           res.permission.filter(c => c.type === '1').map(c => {
-            permissions[c.name] = true
+            permissions[c.right] = true
           })
 
           const avatar = !user.avatar ? require('@/assets/images/boy.png') : user.avatar

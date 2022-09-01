@@ -91,12 +91,12 @@ export default {
      const selectRowData = []
       rights.map(c => {
         const cur = this.getTreeItem(c, this.gridList)
-        console.log(cur, c, 'cur')
         if (cur) {
           selectRowData.push(cur)
           this.$refs.multipleTable.toggleRowSelection(cur)
         }
       })
+      this.selectRowData = selectRowData
     },
     onRowSelected(row, item) {
       const isAdd = row.length > this.selectRowData.length

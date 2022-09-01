@@ -9,6 +9,7 @@
           plain
           @click="handleAdd"
         >添加顶级资源</el-button>
+        <span class="span-tip">此页面数据为开发者操作，请勿随意操作！</span>
       </div>
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
@@ -203,6 +204,13 @@ export default {
 <style lang="scss" scoped>
 ::v-deep .el-input--small .el-input__inner {
   height: 30px;
+  line-height: 30px;
+}
+.span-tip {
+  float: right;
+  color: #999;
+  font-size: 14px;
+  margin-left: 10px;
   line-height: 30px;
 }
 </style>
