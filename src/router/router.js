@@ -7,7 +7,7 @@ export default {
       name: 'FreeMall',
       hidden: false,
       component: 'Layout',
-      alwaysShow: false,
+      alwaysShow: true,
       meta: {
         title: '免费商城',
         noCache: false,
@@ -44,7 +44,7 @@ export default {
       name: 'SeleMall',
       hidden: false,
       component: 'Layout',
-      alwaysShow: false,
+      alwaysShow: true,
       meta: {
         title: '优选商城',
         noCache: false,
@@ -81,7 +81,7 @@ export default {
       name: 'DelaMall',
       hidden: false,
       component: 'Layout',
-      alwaysShow: false,
+      alwaysShow: true,
       meta: {
         title: '代理商城',
         noCache: false,
@@ -118,7 +118,7 @@ export default {
       name: 'UserCenter',
       hidden: false,
       component: 'Layout',
-      alwaysShow: false,
+      alwaysShow: true,
       meta: {
         title: '会员中心',
         noCache: false,
@@ -235,7 +235,7 @@ export default {
 
       hidden: false,
       component: 'Layout',
-      alwaysShow: false,
+      alwaysShow: true,
       meta: {
         title: '后台管理',
         noCache: false,
@@ -305,7 +305,7 @@ export default {
       name: 'MenuManage',
       hidden: false,
       component: 'Layout',
-      alwaysShow: false,
+      alwaysShow: true,
       meta: {
         title: '菜单管理',
         noCache: false,

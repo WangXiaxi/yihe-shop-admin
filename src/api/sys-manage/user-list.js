@@ -28,7 +28,7 @@ export function edit(data) {
 // 删除管理员
 export function dele(data) {
   return request({
-    url: '/service/deleAdminInfo',
+    url: '/service/delAdminInfo',
     method: 'post',
     data
   })

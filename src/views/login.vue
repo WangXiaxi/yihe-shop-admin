@@ -143,7 +143,7 @@ export default {
               message: '登录成功！',
               type: 'success'
             })
-            this.$router.push({ path: this.redirect || '/' }).catch(() => {})
+            this.$router.push({ path: '/' }).catch(() => {})
           })
           .catch(() => {
             this.loading = false
