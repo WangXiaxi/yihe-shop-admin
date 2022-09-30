@@ -74,10 +74,10 @@ export default {
         { name: 'order_no', text: '订单号', width: '120' },
         { name: 'accept_name', text: '收货人', width: '120' },
         { name: 'pay_status_text', text: '支付状态', width: '100' },
-        { name: 'pname', text: '付款方式', realWidth: '100' },
+        { name: 'pname', text: '付款方式', width: '150' },
         { name: 'dname', text: '发货方式', width: '100' },
-        { name: 'username', text: '用户名', realWidth: '120' },
-        { name: 'create_time', text: '下单时间', realWidth: '180' }
+        { name: 'username', text: '用户名', width: '120' },
+        { name: 'create_time', text: '下单时间', width: '180' }
       ],
       todoList: [
         {
@@ -125,6 +125,42 @@ export default {
           key: 'goodsWarning',
           icon: 'el-icon-message-solid',
           num: 0
+        },
+        {
+          label: '版通积分池',
+          key: 'btpointPool',
+          icon: 'el-icon-s-marketing',
+          num: 0
+        },
+        {
+          label: '待提现',
+          key: 'sum_balance',
+          icon: 'el-icon-time',
+          num: 0
+        },
+        {
+          label: '复消券',
+          key: 'sum_package_plus',
+          icon: 'el-icon-document-copy',
+          num: 0
+        },
+        {
+          label: '储备金',
+          key: 'sum_sur_plus',
+          icon: 'el-icon-s-finance',
+          num: 0
+        },
+        {
+          label: '版通券',
+          key: 'sum_point',
+          icon: 'el-icon-s-ticket',
+          num: 0
+        },
+        {
+          label: '版通积分',
+          key: 'sum_btpoint',
+          icon: 'el-icon-magic-stick',
+          num: 0
         }
       ],
       pageLoading: false
@@ -150,6 +186,7 @@ export default {
     },
     async getList() {
       const res = await list()
+      Object.assign(res, res.btpoint, res.userData[0])
       this.todoList.map((c) => {
         c.num = res[c.key] || 0
       })

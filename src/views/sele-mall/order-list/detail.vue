@@ -308,12 +308,12 @@
         </el-tab-pane>
         <el-tab-pane label="发货记录" name="second">
           <el-table class="grid-table" :data="deList" style="width: 100%">
-            <el-table-column label="配送时间" prop="name"></el-table-column>
-            <el-table-column label="配送方式" prop="name"></el-table-column>
-            <el-table-column label="物流公司" prop="name"></el-table-column>
-            <el-table-column label="物流单号" prop="name"></el-table-column>
+            <el-table-column label="配送时间" prop="time"></el-table-column>
+            <el-table-column label="配送方式" prop="pname"></el-table-column>
+            <el-table-column label="物流公司" prop="freight_name"></el-table-column>
+            <el-table-column label="物流单号" prop="delivery_code"></el-table-column>
             <el-table-column label="收件人" prop="name"></el-table-column>
-            <el-table-column label="备注" prop="name"></el-table-column>
+            <el-table-column label="备注" prop="note"></el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="订单日志" name="third">

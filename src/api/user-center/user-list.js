@@ -57,4 +57,11 @@ export function editSystemVipUser(data) {
     data
   })
 }
-
+// 获取详情
+export function reportSystemUserList(params) {
+  return request({
+    url: '/service/reportSystemUserList',
+    method: 'get',
+    params
+  })
+}

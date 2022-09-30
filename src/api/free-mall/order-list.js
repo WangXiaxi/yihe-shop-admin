@@ -88,3 +88,11 @@ export function getFreightCompany(params) {
     params
   })
 }
+// 获取详情
+export function reportSystemOrderList(params) {
+  return request({
+    url: '/service/reportSystemOrderList',
+    method: 'get',
+    params
+  })
+}

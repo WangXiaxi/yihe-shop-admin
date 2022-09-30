@@ -43,7 +43,9 @@ import InputCleaves from '@/components/AdminForm/InputCleaves'
 import ChooseList from '@/components/admin-choose-list/index'
 // 图片裁剪
 import VueCropper from 'vue-cropper'
+import JsonExcel from 'vue-json-excel'
 
+Vue.component('DownloadExcel', JsonExcel)
 // 全局方法挂载
 Vue.prototype.parseTime = parseTime
 Vue.prototype.resetForm = resetForm

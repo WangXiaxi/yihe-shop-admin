@@ -151,13 +151,15 @@
           :loading="agLoading"
           @click="handleFilter"
           icon="el-icon-search"
-        >查询</el-button>
+          >查询</el-button
+        >
         <el-button
           class="inp"
           :loading="agLoading"
           @click="handleReset"
           icon="el-icon-refresh"
-        >清空</el-button>
+          >清空</el-button
+        >
 
         <i
           @click="handleSpread"
@@ -171,7 +173,8 @@
           type="primary"
           plain
           @click="handleAdd"
-        >添加订单</el-button>
+          >添加订单</el-button
+        >
         <el-button
           v-if="permission('FreeMallOrder_dele')"
           :disabled="disabled"
@@ -179,15 +182,22 @@
           type="primary"
           plain
           @click="handleDele()"
-        >批量删除</el-button>
+          >批量删除</el-button
+        >
         <!-- <el-button type="primary" plain @click="handleSend">批量发货</el-button> -->
         <!-- <el-button type="primary" plain @click="handleAdd">回收站</el-button> -->
-        <!-- <el-button
-          type="primary"
+        <download-excel
+        v-if="permission('FreeMallOrder_export')"
+
           class="export"
-          plain
-          @click="handleExport"
-        >导出</el-button> -->
+          style="float: right"
+          :fields="json_fields"
+          worksheet="My Worksheet"
+          :fetch="handleExport"
+          name="免费商城订单列表"
+        >
+          <el-button type="primary" class="export" plain>导出</el-button>
+        </download-excel>
       </div>
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
@@ -219,31 +229,36 @@
             label="操作"
             fixed="right"
             width="180"
-            v-if="permission('FreeMallOrder_detail') || permission('FreeMallOrder_edit')||permission('FreeMallOrder_dele')"
+            v-if="
+              permission('FreeMallOrder_detail') ||
+              permission('FreeMallOrder_edit') ||
+              permission('FreeMallOrder_dele')
+            "
           >
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <el-button
                   v-if="permission('FreeMallOrder_detail')"
-
                   icon="el-icon-view"
                   type="text"
                   @click="handleDetail(row)"
-                >查看</el-button>
+                  >查看</el-button
+                >
                 <el-button
                   v-if="permission('FreeMallOrder_edit')"
-
                   icon="el-icon-edit"
                   type="text"
                   :loading="row.btnLoading"
                   @click="handleEdit(row)"
-                >编辑</el-button>
+                  >编辑</el-button
+                >
                 <el-button
                   v-if="permission('FreeMallOrder_dele')"
                   icon="el-icon-delete"
                   type="text"
                   @click="handleDele(row, 'single')"
-                >删除</el-button>
+                  >删除</el-button
+                >
               </div>
             </template>
           </el-table-column>
@@ -263,7 +278,11 @@
 
 <script>
 import { cloneDeep } from 'lodash'
-import { list, dele } from '@/api/free-mall/order-list.js'
+import {
+  list,
+  dele,
+  reportSystemOrderList
+} from '@/api/free-mall/order-list.js'
 import pagination from '@/mixins/pagination'
 import auth from '@/mixins/auth'
 
@@ -287,6 +306,7 @@ export default {
   props: {},
   data() {
     return {
+      copy: {},
       gridList: [],
       listQuery: cloneDeep(baseQuery),
       tableListText: [
@@ -325,10 +345,44 @@ export default {
       ]
     }
   },
-  computed: {},
+  computed: {
+    json_fields() {
+      const cur = {
+        订单编号: 'order_no',
+        下单日期: 'create_time',
+        完成日期: 'completion_time',
+        配送方式: 'distribute_name',
+        收货人: 'accept_name',
+        省市区: 'area_addr',
+        收货地址: 'address',
+        电话: 'mobile',
+        订单金额: 'order_amount',
+        订单版通券: 'spend_point',
+        退款金额: 'refund_amount',
+        支付方式: 'payment_name',
+        支付状态: 'pay_text',
+        发货状态: 'distribution_text',
+        商品信息: 'order_goods',
+        订单备注: 'note',
+        订单类型: 'goods_type',
+        获得版通券: 'point'
+      }
+      //  this.tableListText.map((c) => {
+      //     cur[c.text] = c.name
+      //   })
+      return cur
+    }
+  },
   created() {},
   mounted() {},
   methods: {
+    async handleExport() {
+      const res = await reportSystemOrderList(this.copy)
+      return res.data.map(c => {
+        c.order_goods = JSON.stringify(c.order_goods)
+        return c
+      })
+    },
     handleDetail(row) {
       this.$router.push(`/free-mall/order-list/page/detail/${row.id}`)
     },
@@ -337,8 +391,9 @@ export default {
     },
     handleSend() {},
     handleDele(item, type = 'more') {
-      const ids = (type === 'single' ? [item] : this.selectRowData)
-        .map((c) => c.id)
+      const ids = (type === 'single' ? [item] : this.selectRowData).map(
+        (c) => c.id
+      )
       const baseObj = { more: this, single: item }[type]
       const content = '确定删除当前选中商品吗？'
       this.$confirm(content, '提示', {
@@ -404,7 +459,7 @@ export default {
         page: pageIndex,
         limit: pageSize,
         paging: true,
-          type: 'free'
+        type: 'free'
       }
 
       if (create_time && create_time.length) {
@@ -422,6 +477,7 @@ export default {
 
       list(sendData)
         .then((res) => {
+          this.copy = cloneDeep(sendData)
           this.agLoading = false
           const { data, total } = res
           Object.assign(this, {

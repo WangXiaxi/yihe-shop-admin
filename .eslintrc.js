@@ -28,6 +28,8 @@ module.exports = {
     'vue/name-property-casing': ['error', 'PascalCase'],
     'vue/no-mutating-props': 'off',
     'vue/no-v-html': 'off',
+    'vue/html-indent': 'off',
+    'vue/html-closing-bracket-newline': 'off',
     'vue/order-in-components': 'off',
     'vue/html-self-closing': 'off',
     'vue/attributes-order': 'off',

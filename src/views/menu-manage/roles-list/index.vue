@@ -24,11 +24,11 @@
           @selection-change="onRowSelected"
           v-loading="agLoading"
         >
-          <el-table-column
+          <!-- <el-table-column
             type="selection"
             width="35"
             fixed
-          ></el-table-column>
+          ></el-table-column> -->
           <el-table-column
             v-for="(item, index) in tableListText"
             :key="index"
