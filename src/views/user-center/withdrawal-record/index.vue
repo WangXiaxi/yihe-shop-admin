@@ -132,11 +132,16 @@ export default {
         { name: 'username', text: '用户名', width: '100' },
         { name: 'balance', text: '当前预存款', width: '100' },
         { name: 'amount', text: '申请提现金额', width: '100' },
+        { name: 'service_free', text: '服务费', width: '100' },
         { name: 'time', text: '	申请时间', width: '100' },
         { name: 'name', text: '收款人姓名', width: '100' },
         { name: 'card_num', text: '银行卡号', width: '100' },
         { name: 'bank', text: '银行', width: '100' },
         { name: 'bank_branch', text: '银行名称', width: '200' },
+        { name: 'bank_address', text: '银行地址', width: '200' },
+
+        { name: 'note', text: '备注', width: '200' },
+        { name: 'finish_time', text: '完成时间', width: '100' },
         { name: 'statusDesc', text: '状态', width: '100' }
       ],
       btnLoading: false,
@@ -217,6 +222,7 @@ export default {
 
     handleData(item) {
       item.statusDesc = { 0: '未处理', 2: '已同意' }[item.status]
+      item.bank_address = item.province + '-' + item.city
       return item
     },
     getList() {

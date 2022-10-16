@@ -225,6 +225,17 @@ export default {
             noCache: false,
             link: null
           }
+        },
+        {
+          name: 'UserCenterReBill',
+          path: 're-bill-list',
+          hidden: false,
+          component: 'user-center/re-bill-list/index',
+          meta: {
+            title: '退款单列表',
+            noCache: false,
+            link: null
+          }
         }
       ]
     },

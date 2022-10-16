@@ -237,6 +237,22 @@ export const dynamicRoutes = [
       }
     ]
   },
+
+  {
+    path: '/user-center/re-bill-list/page',
+    component: Layout,
+    hidden: true,
+
+    children: [
+      {
+        path: 'detail',
+        component: () => import('@/views/user-center/re-bill-list/detail'),
+        name: 'UserCenterUserDetail',
+        meta: { title: '退款单详情', activeMenu: '/user-center/re-bill-list', activeMenuPath: 'UserCenter/UserCenterReBill' }
+      }
+    ]
+  },
+
   {
     path: '/sys-manage/spec-list/page',
     component: Layout,

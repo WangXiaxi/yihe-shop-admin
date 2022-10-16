@@ -5,13 +5,14 @@
     <el-row :gutter="10">
       <el-col
         v-for="(item, index) in todoList"
+
         :key="index"
         :xs="8"
         :sm="6"
         :md="6"
         :lg="4"
       >
-        <div class="item">
+        <div @click="handleGourl(item)" class="item" :class="{ cursor: item.auth }">
           <i :class="item.icon"></i>
           <div class="box">
             <div class="num">{{ item.num }}</div>
@@ -65,7 +66,11 @@
 
 <script>
 import { list } from '@/api/home'
+import auth from '@/mixins/auth'
+
 export default {
+  mixins: [auth],
+
   components: {},
   data() {
     return {
@@ -90,21 +95,27 @@ export default {
           label: '待审提现',
           key: 'withdrawWaitCount',
           icon: 'el-icon-s-order',
-          num: 0
+          num: 0,
+          auth: 'UserCenterWithdrawalRecord',
+          url: '/user-center/withdrawal-record'
         },
         {
           label: '退款申请',
           key: 'refundsCount',
           icon: 'el-icon-s-platform',
+          num: 0,
+          auth: 'UserCenterReBill',
 
-          num: 0
+          url: '/user-center/re-bill-list'
         },
         {
           label: '注册用户',
           key: 'getCountRegUser',
           icon: 'el-icon-user-solid',
+          auth: 'UserCenterUser',
 
-          num: 0
+          num: 0,
+          url: '/user-center/user-list'
         },
         {
           label: '商品数量',
@@ -131,12 +142,17 @@ export default {
           key: 'btpointPool',
           icon: 'el-icon-s-marketing',
           num: 0
+
         },
         {
           label: '待提现',
           key: 'sum_balance',
           icon: 'el-icon-time',
-          num: 0
+          num: 0,
+          auth: 'UserCenterWithdrawalRecord',
+
+          url: '/user-center/withdrawal-record'
+
         },
         {
           label: '复消券',
@@ -175,6 +191,13 @@ export default {
     this.getList()
   },
   methods: {
+    handleGourl(item) {
+      if (!item.url) return
+      if (!this.permission(item.auth)) {
+        return this.$message.error('对不起，您没有相关菜单权限！')
+      }
+     this.goUrl(item.url)
+    },
     handleDetail(row) {
      const typeUrl = {
       free: `/free-mall/order-list/page/detail/${row.oid}`,
@@ -194,6 +217,7 @@ export default {
     },
     // 跳转
     goUrl(path) {
+      console.log(path)
       this.$router.push(path)
     }
   }
@@ -232,6 +256,9 @@ export default {
   box-shadow: 4px 4px 40px rgb(0 0 0 / 5%);
   border-color: rgba(0, 0, 0, 0.05);
   text-align: right;
+  &.cursor {
+    cursor: pointer;
+  }
   .box {
     flex: 1;
   }

@@ -61,7 +61,7 @@ const user = {
           const user = { avatar: localStorage.getItem('hw-admin-avatar') } // res.user
 
           const permissions = {}
-          res.permission.filter(c => c.type === '1').map(c => {
+          res.permission.filter(c => c.type).map(c => {
             permissions[c.right] = true
           })
 

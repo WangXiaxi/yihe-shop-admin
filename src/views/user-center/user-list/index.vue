@@ -309,7 +309,7 @@ export default {
       Object.assign(this.tag, item, {
         name: item.username
       })
-      this.handleFilter()
+      this.handleReset()
     },
     handleAction(item) {
       Object.assign(this.actionDialog, {
