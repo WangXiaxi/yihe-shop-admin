@@ -19,7 +19,20 @@
             clearable
           />
         </div>
-
+        <div class="search-form-item">
+          <el-date-picker
+            v-model="listQuery.create_time"
+            class="inp"
+            style="width: auto"
+            type="datetimerange"
+            range-separator="至"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            :default-time="['00:00:00', '23:59:59']"
+          >
+          </el-date-picker>
+        </div>
         <el-button
           class="inp"
           type="primary"
@@ -37,6 +50,22 @@
       <!-- <div class="button-operation admin-mt-10">
         <el-button type="primary" plain @click="handleAdd">提现</el-button>
       </div> -->
+
+      <div class="button-operation admin-mt-10">
+        <download-excel
+        v-if="permission('UserCenterWithdrawalRecord_export')"
+
+          class="export"
+          style="float: right"
+          :fields="json_fields"
+          worksheet="My Worksheet"
+          :fetch="handleExport"
+          name="提现列表"
+        >
+          <el-button type="primary" class="export" plain>导出</el-button>
+        </download-excel>
+      </div>
+
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
           class="grid-table"
@@ -64,23 +93,34 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="permission('UserCenterWithdrawalRecord_agree') || permission('UserCenterWithdrawalRecord_dele')"
+            v-if="permission('UserCenterWithdrawalRecord_agree') || permission('UserCenterWithdrawalRecord_refuse') || permission('UserCenterWithdrawalRecord_dele')"
 
             label="操作"
             fixed="right"
-            width="120"
+            width="180"
           >
             <template slot-scope="{ row }">
               <div class="grid-handle-list">
                 <el-button
                   v-if="permission('UserCenterWithdrawalRecord_agree')"
 
-                  icon="el-icon-edit"
+                  icon="el-icon-check"
                   type="text"
                   :disabled="row.status !== '0'"
                   :loading="row.btnLoading"
                   @click="handleSure(row)"
                 >同意</el-button>
+
+                <el-button
+                  v-if="permission('UserCenterWithdrawalRecord_refuse')"
+
+                  icon="el-icon-close"
+                  type="text"
+                  :disabled="row.status !== '0'"
+                  :loading="row.btnLoading"
+                  @click="handleRefuse(row)"
+                >拒绝</el-button>
+
                 <el-button
                   v-if="permission('UserCenterWithdrawalRecord_dele')"
 
@@ -102,10 +142,12 @@
         @change="handlePageChange"
       />
     </div>
-  </div>
+    <refuse-dialog :info="refuseDialog" @update="handleFilter">
+  </refuse-dialog></div>
 </template>
 
 <script>
+import RefuseDialog from './components/refuse-dialog'
 import { cloneDeep } from 'lodash'
 import {
   list,
@@ -117,16 +159,20 @@ import auth from '@/mixins/auth'
 
 const baseQuery = {
   type: 'wait_status',
-  content: ''
+  content: '',
+  create_time: null
 }
 
 export default {
   name: 'UserCenterWithdrawalRecord',
-  components: {},
+  components: {
+    RefuseDialog
+  },
   mixins: [pagination, auth],
   props: {},
   data() {
     return {
+      copy: {},
       listQuery: cloneDeep(baseQuery),
       tableListText: [
         { name: 'username', text: '用户名', width: '100' },
@@ -148,17 +194,52 @@ export default {
       addDialog: {
         visible: false
       },
-
+      refuseDialog: {
+        visible: false
+      },
       typeOptions: [
         { label: '已处理', key: 'done_status' },
         { label: '未处理', key: 'wait_status' }
       ]
     }
   },
-  computed: {},
+  computed: {
+    json_fields() {
+      const cur = {
+        '用户名': 'username',
+        '当前预存款': 'balance',
+         '申请提现金额': 'amount',
+         '服务费': 'service_free',
+         '申请时间': 'time',
+         '收款人姓名': 'name',
+         '银行卡号': 'card_num',
+         '银行': 'bank',
+         '银行名称': 'bank_branch',
+         '银行地址': 'bank_address',
+         '备注': 'note',
+         '完成时间': 'finish_time',
+         '状态': 'statusDesc'
+      }
+      return cur
+    }
+  },
   created() {},
   mounted() {},
   methods: {
+    async handleExport() {
+      this.copy.limit = 1000000
+      this.copy.page = 1
+      const res = await list(this.copy)
+      return res.data.map(c => {
+        return this.handleData(c)
+      })
+    },
+    handleRefuse(row) {
+      Object.assign(this.refuseDialog, {
+        visible: true,
+        data: row
+      })
+    },
     async handleSure(row) {
       const content = `确定用户[${row.username}(${row.name})]已提现[${row.amount}]元吗（线下转账）？`
       await this.$confirm(content, '提示', {
@@ -222,20 +303,28 @@ export default {
 
     handleData(item) {
       item.statusDesc = { 0: '未处理', 2: '已同意' }[item.status]
-      item.bank_address = item.province + '-' + item.city
+      item.bank_address = item.province_text + '-' + item.city_text
       return item
     },
     getList() {
       this.agLoading = true
-      const { type, pageSize, pageIndex } = this.listQuery
+      const { type, pageSize, pageIndex, create_time } = this.listQuery
       const sendData = {
         type,
         page: pageIndex,
         limit: pageSize,
         paging: true
       }
+      if (create_time && create_time.length) {
+        sendData.start_time = create_time[0]
+        sendData.end_time = create_time[1]
+      } else {
+        sendData.start_time = undefined
+        sendData.end_time = undefined
+      }
       list(sendData)
         .then((res) => {
+          this.copy = cloneDeep(sendData)
           this.agLoading = false
           const { data, total } = res
           Object.assign(this, {

@@ -25,6 +25,20 @@
           icon="el-icon-refresh"
         >清空</el-button>
       </div>
+      <div class="button-operation admin-mt-10">
+        <download-excel
+        v-if="permission('UserCenterCard_export')"
+
+          class="export"
+          style="float: right"
+          :fields="json_fields"
+          worksheet="My Worksheet"
+          :fetch="handleExport"
+          name="用户银行卡列表"
+        >
+          <el-button type="primary" class="export" plain>导出</el-button>
+        </download-excel>
+      </div>
       <div ref="gridList" flex-box="1" class="grid-list admin-mt-10">
         <el-table
           class="grid-table"
@@ -83,6 +97,7 @@
 import { cloneDeep } from 'lodash'
 import { list } from '@/api/user-center/card-list'
 import pagination from '@/mixins/pagination'
+import auth from '@/mixins/auth'
 
 const baseQuery = {
   username: ''
@@ -90,10 +105,12 @@ const baseQuery = {
 
 export default {
   name: 'UserCenterCard',
-  mixins: [pagination],
+  mixins: [pagination, auth],
+
   props: {},
   data() {
     return {
+      copy: {},
       listQuery: cloneDeep(baseQuery),
       tableListText: [
         { name: 'username', text: '用户', width: '100' },
@@ -112,10 +129,30 @@ export default {
       }
     }
   },
-  computed: {},
+  computed: {
+    json_fields() {
+      const cur = {
+        '用户': 'username',
+        '手机号': 'mobile',
+         '银行卡号': 'card_num',
+         '银行': 'bank',
+         '开户银行': 'bank_branch',
+         '创建时间': 'time'
+      }
+      return cur
+    }
+  },
   created() {},
   mounted() {},
   methods: {
+    async handleExport() {
+      this.copy.limit = 1000000
+      this.copy.page = 1
+      const res = await list(this.copy)
+      return res.data.map(c => {
+        return this.handleData(c)
+      })
+    },
     handleReset() {
       Object.assign(this.listQuery, cloneDeep(baseQuery))
       this.handleFilter()
@@ -136,6 +173,7 @@ export default {
       }
       list(sendData)
         .then((res) => {
+          this.copy = cloneDeep(sendData)
           this.agLoading = false
           const { data, total } = res
           Object.assign(this, {

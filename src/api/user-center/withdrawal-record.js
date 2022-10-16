@@ -24,3 +24,10 @@ export function withdrawBatchEdit(data) {
     data
   })
 }
+export function withdrawEditByID(data) {
+  return request({
+    url: '/service/withdrawEditByID',
+    method: 'post',
+    data
+  })
+}
