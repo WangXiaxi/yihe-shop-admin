@@ -68,8 +68,7 @@
         >
 
         <download-excel
-        v-if="permission('UserCenterUser_export')"
-
+          v-if="permission('UserCenterUser_export')"
           class="export"
           style="float: right"
           :fields="json_fields"
@@ -109,7 +108,15 @@
                 @click="handleChild(row)"
                 >{{ row[item.name] | fill }}</el-link
               >
-
+              <div v-else-if="item.name === 'balance'">
+                {{ row[item.name] | fill }}
+                <el-button
+                v-if="permission('UserCenterUser_balance_edit')"
+                  icon="el-icon-edit"
+                  type="text"
+                  @click="handleEditBalance(row)"
+                ></el-button>
+              </div>
               <span v-else>{{ row[item.name] | fill }}</span>
             </template>
           </el-table-column>
@@ -176,6 +183,7 @@
       />
     </div>
     <ActionDialog :info="actionDialog" @update="handleUpdate"></ActionDialog>
+    <BalanceDialog :info="balanceDialog" @update="handleUpdate"></BalanceDialog>
   </div>
 </template>
 
@@ -191,6 +199,7 @@ import pagination from '@/mixins/pagination'
 import auth from '@/mixins/auth'
 
 import ActionDialog from './components/action-dialog.vue'
+import BalanceDialog from './components/balance-dialog.vue'
 
 const baseQuery = {
   type: 'username',
@@ -200,7 +209,8 @@ const baseQuery = {
 export default {
   name: 'UserCenterUser',
   components: {
-    ActionDialog
+    ActionDialog,
+    BalanceDialog
   },
   mixins: [pagination, auth],
   props: {},
@@ -228,6 +238,9 @@ export default {
       ],
       btnLoading: false,
       addDialog: {
+        visible: false
+      },
+      balanceDialog: {
         visible: false
       },
       sexOptions: [
@@ -297,6 +310,12 @@ export default {
     this.$bus.off('UserCenterUserUpdate')
   },
   methods: {
+    handleEditBalance(item) {
+      Object.assign(this.balanceDialog, {
+        visible: true,
+        data: item
+      })
+    },
     async handleExport() {
       const res = await reportSystemUserList(this.copy)
       return res.data.map(this.handleData)

@@ -8,39 +8,40 @@
           type="primary"
           plain
           @click="handlePay"
-        >支付</el-button>
+          >支付</el-button
+        >
         <el-button
           v-if="permission('FreeMallOrder_send')"
-
           :disabled="!btns.to_deliver"
           type="primary"
           plain
           @click="handleSend"
-        >发货</el-button>
+          >发货</el-button
+        >
         <el-button
           v-if="permission('FreeMallOrder_return')"
-
           :disabled="!btns.to_refundment"
           type="primary"
           plain
           @click="handleReturn"
-        >退款</el-button>
+          >退款</el-button
+        >
         <el-button
           v-if="permission('FreeMallOrder_finish')"
-
           :disabled="!btns.to_finish"
           type="primary"
           plain
           @click="handleFinish"
-        >完成</el-button>
+          >完成</el-button
+        >
         <el-button
           v-if="permission('FreeMallOrder_cancel')"
-
           :disabled="!btns.to_cancel"
           type="primary"
           plain
           @click="handleCancel"
-        >作废</el-button>
+          >作废</el-button
+        >
       </div>
 
       <el-tabs v-model="activeName" v-loading="pageLoading">
@@ -69,6 +70,12 @@
                     <div class="goods-td-name">{{ row.name }}</div>
                   </div>
                 </div>
+              </template>
+            </el-table-column>
+
+            <el-table-column label="规格" min-width="150px">
+              <template slot-scope="{ row }">
+                {{ row.value }}
               </template>
             </el-table-column>
 
@@ -101,219 +108,229 @@
 
           <el-row :gutter="10" style="margin-top: 5px; padding-bottom: 5px">
             <el-col
-              :span="12"
-            ><div class="grid-content">
-              <div class="title">订单金额明细</div>
-              <div class="content">
-                <div class="item">
-                  <div class="item-label">商品总额:</div>
-                  <div class="item-value">￥{{ detail.real_amount }}</div>
-                </div>
-                <div class="item">
-                  <div class="item-label">实付运费:</div>
-                  <div class="item-value">￥{{ detail.real_freight }}</div>
-                </div>
+:span="12"
+              ><div class="grid-content">
+                <div class="title">订单金额明细</div>
+                <div class="content">
+                  <div class="item">
+                    <div class="item-label">商品总额:</div>
+                    <div class="item-value">￥{{ detail.real_amount }}</div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">实付运费:</div>
+                    <div class="item-value">￥{{ detail.real_freight }}</div>
+                  </div>
 
-                <div class="item">
-                  <div class="item-label">税金:</div>
-                  <div class="item-value">￥{{ detail.taxes }}</div>
+                  <div class="item">
+                    <div class="item-label">税金:</div>
+                    <div class="item-value">￥{{ detail.taxes }}</div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">优惠总额:</div>
+                    <div class="item-value">￥{{ detail.promotions }}</div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">加价或减价:</div>
+                    <div class="item-value">￥{{ detail.discount }}</div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">订单总额:</div>
+                    <div class="item-value">￥{{ detail.order_amount }}</div>
+                  </div>
                 </div>
-                <div class="item">
-                  <div class="item-label">优惠总额:</div>
-                  <div class="item-value">￥{{ detail.promotions }}</div>
-                </div>
-                <div class="item">
-                  <div class="item-label">加价或减价:</div>
-                  <div class="item-value">￥{{ detail.discount }}</div>
-                </div>
-                <div class="item">
-                  <div class="item-label">订单总额:</div>
-                  <div class="item-value">￥{{ detail.order_amount }}</div>
-                </div>
-              </div>
-            </div></el-col>
+              </div></el-col
+            >
             <el-col
-              :span="12"
-            ><div class="grid-content">
-              <div class="title">订单信息</div>
-              <div class="content">
-                <div class="item">
-                  <div class="item-label">订单号:</div>
-                  <div class="item-value">{{ detail.order_no | fill }}</div>
-                </div>
-                <div class="item">
-                  <div class="item-label">当前状态:</div>
-                  <div class="item-value">
-                    {{ detail.status_text | fill }}
+:span="12"
+              ><div class="grid-content">
+                <div class="title">订单信息</div>
+                <div class="content">
+                  <div class="item">
+                    <div class="item-label">订单号:</div>
+                    <div class="item-value">{{ detail.order_no | fill }}</div>
                   </div>
-                </div>
-                <div class="item">
-                  <div class="item-label">支付状态:</div>
-                  <div class="item-value">
-                    {{ detail.pay_status_text | fill }}
+                  <div class="item">
+                    <div class="item-label">当前状态:</div>
+                    <div class="item-value">
+                      {{ detail.status_text | fill }}
+                    </div>
                   </div>
-                </div>
-                <div class="item">
-                  <div class="item-label">配送状态:</div>
-                  <div class="item-value">
-                    {{ detail.distribution_status_text | fill }}
+                  <div class="item">
+                    <div class="item-label">支付状态:</div>
+                    <div class="item-value">
+                      {{ detail.pay_status_text | fill }}
+                    </div>
                   </div>
-                </div>
-                <div class="item">
-                  <div class="item-label">订单类型:</div>
-                  <div class="item-value">
-                    {{ detail.order_type_text | fill }}
+                  <div class="item">
+                    <div class="item-label">配送状态:</div>
+                    <div class="item-value">
+                      {{ detail.distribution_status_text | fill }}
+                    </div>
                   </div>
-                </div>
-                <div class="item">
-                  <div class="item-label">订单附言:</div>
-                  <div class="item-value">{{ detail.note | fill }}</div>
+                  <div class="item">
+                    <div class="item-label">订单类型:</div>
+                    <div class="item-value">
+                      {{ detail.order_type_text | fill }}
+                    </div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">订单附言:</div>
+                    <div class="item-value">{{ detail.note | fill }}</div>
+                  </div>
                 </div>
               </div>
-            </div>
             </el-col>
             <el-col
-              :span="12"
-            ><div class="grid-content">
-              <div class="title">收件人信息</div>
-              <div class="content">
-                <div class="item">
-                  <div class="item-label">发货日期:</div>
-                  <div class="item-value">{{ detail.send_time | fill }}</div>
-                </div>
-                <div class="item">
-                  <div class="item-label">姓名:</div>
-                  <div class="item-value">
-                    {{ detail.accept_name | fill }}
+:span="12"
+              ><div class="grid-content">
+                <div class="title">收件人信息</div>
+                <div class="content">
+                  <div class="item">
+                    <div class="item-label">发货日期:</div>
+                    <div class="item-value">{{ detail.send_time | fill }}</div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">姓名:</div>
+                    <div class="item-value">
+                      {{ detail.accept_name | fill }}
+                    </div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">手机:</div>
+                    <div class="item-value">{{ detail.mobile | fill }}</div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">电话:</div>
+                    <div class="item-value">{{ detail.telphone | fill }}</div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">地区:</div>
+                    <div class="item-value" v-html="detail.area_addr"></div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">地址:</div>
+                    <div class="item-value">{{ detail.address | fill }}</div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">邮编:</div>
+                    <div class="item-value">{{ detail.postcode | fill }}</div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">要求送货时间:</div>
+                    <div class="item-value">
+                      {{ detail.accept_time | fill }}
+                    </div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">送货时间:</div>
+                    <div class="item-value">{{ detail.send_time | fill }}</div>
                   </div>
                 </div>
-                <div class="item">
-                  <div class="item-label">手机:</div>
-                  <div class="item-value">{{ detail.mobile | fill }}</div>
-                </div>
-                <div class="item">
-                  <div class="item-label">电话:</div>
-                  <div class="item-value">{{ detail.telphone | fill }}</div>
-                </div>
-                <div class="item">
-                  <div class="item-label">地区:</div>
-                  <div class="item-value" v-html="detail.area_addr"></div>
-                </div>
-                <div class="item">
-                  <div class="item-label">地址:</div>
-                  <div class="item-value">{{ detail.address | fill }}</div>
-                </div>
-                <div class="item">
-                  <div class="item-label">邮编:</div>
-                  <div class="item-value">{{ detail.postcode | fill }}</div>
-                </div>
-                <div class="item">
-                  <div class="item-label">要求送货时间:</div>
-                  <div class="item-value">
-                    {{ detail.accept_time | fill }}
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="item-label">送货时间:</div>
-                  <div class="item-value">{{ detail.send_time | fill }}</div>
-                </div>
-              </div>
-            </div></el-col>
+              </div></el-col
+            >
 
             <el-col
-              :span="12"
-            ><div class="grid-content">
-              <div class="title">配送支付信息</div>
-              <div class="content">
-                <div class="item">
-                  <div class="item-label">配送方式:</div>
-                  <div class="item-value">{{ detail.delivery | fill }}</div>
-                </div>
-                <div class="item">
-                  <div class="item-label">商品重量:</div>
-                  <div class="item-value">
-                    {{ detail.goods_weight | fill }}
+:span="12"
+              ><div class="grid-content">
+                <div class="title">配送支付信息</div>
+                <div class="content">
+                  <div class="item">
+                    <div class="item-label">配送方式:</div>
+                    <div class="item-value">{{ detail.delivery | fill }}</div>
                   </div>
-                </div>
-                <div class="item">
-                  <div class="item-label">支付方式:</div>
-                  <div class="item-value">{{ detail.payment | fill }}</div>
-                </div>
-                <div class="item">
-                  <div class="item-label">可得版通券:</div>
-                  <div class="item-value">{{ detail.point | fill }}</div>
-                </div>
-                <!-- <div class="item">
+                  <div class="item">
+                    <div class="item-label">商品重量:</div>
+                    <div class="item-value">
+                      {{ detail.goods_weight | fill }}
+                    </div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">支付方式:</div>
+                    <div class="item-value">{{ detail.payment | fill }}</div>
+                  </div>
+                  <div class="item">
+                    <div class="item-label">可得版通券:</div>
+                    <div class="item-value">{{ detail.point | fill }}</div>
+                  </div>
+                  <!-- <div class="item">
                   <div class="item-label">可得经验:</div>
                   <div class="item-value">{{ detail.exp | fill }}</div>
                 </div> -->
-              </div>
-            </div></el-col>
+                </div>
+              </div></el-col
+            >
 
             <el-col
-              :span="12"
-              v-if="detail.invoice === '1'"
-            ><div class="grid-content">
-              <div class="title">发票信息</div>
-              <div class="content">
-                <div class="item">
-                  <div class="item-label">公司名称:</div>
-                  <div class="item-value">
-                    {{ detail.invoice_info.company_name | fill }}
+:span="12"
+v-if="detail.invoice === '1'"
+              ><div class="grid-content">
+                <div class="title">发票信息</div>
+                <div class="content">
+                  <div class="item">
+                    <div class="item-label">公司名称:</div>
+                    <div class="item-value">
+                      {{ detail.invoice_info.company_name | fill }}
+                    </div>
                   </div>
-                </div>
-                <div class="item">
-                  <div class="item-label">纳税人识别码:</div>
-                  <div class="item-value">
-                    {{ detail.invoice_info.taxcode | fill }}
+                  <div class="item">
+                    <div class="item-label">纳税人识别码:</div>
+                    <div class="item-value">
+                      {{ detail.invoice_info.taxcode | fill }}
+                    </div>
                   </div>
-                </div>
-                <div class="item">
-                  <div class="item-label">注册地址:</div>
-                  <div class="item-value">
-                    {{ detail.invoice_info.address | fill }}
+                  <div class="item">
+                    <div class="item-label">注册地址:</div>
+                    <div class="item-value">
+                      {{ detail.invoice_info.address | fill }}
+                    </div>
                   </div>
-                </div>
-                <div class="item">
-                  <div class="item-label">注册电话:</div>
-                  <div class="item-value">
-                    {{ detail.invoice_info.telphone | fill }}
+                  <div class="item">
+                    <div class="item-label">注册电话:</div>
+                    <div class="item-value">
+                      {{ detail.invoice_info.telphone | fill }}
+                    </div>
                   </div>
-                </div>
-                <div class="item">
-                  <div class="item-label">开户银行:</div>
-                  <div class="item-value">
-                    {{ detail.invoice_info.bankname | fill }}
+                  <div class="item">
+                    <div class="item-label">开户银行:</div>
+                    <div class="item-value">
+                      {{ detail.invoice_info.bankname | fill }}
+                    </div>
                   </div>
-                </div>
 
-                <div class="item">
-                  <div class="item-label">银行账号:</div>
-                  <div class="item-value">
-                    {{ detail.invoice_info.bankno | fill }}
+                  <div class="item">
+                    <div class="item-label">银行账号:</div>
+                    <div class="item-value">
+                      {{ detail.invoice_info.bankno | fill }}
+                    </div>
                   </div>
-                </div>
 
-                <div class="item">
-                  <div class="item-label">发票类型:</div>
-                  <div class="item-value">
-                    {{
-                      { 1: '普通发票', 2: '增值税专用票' }[
-                        detail.invoice_info.type
-                      ] | fill
-                    }}
+                  <div class="item">
+                    <div class="item-label">发票类型:</div>
+                    <div class="item-value">
+                      {{
+                        { 1: "普通发票", 2: "增值税专用票" }[
+                          detail.invoice_info.type
+                        ] | fill
+                      }}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div></el-col>
+              </div></el-col
+            >
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="发货记录" name="second">
           <el-table class="grid-table" :data="deList" style="width: 100%">
             <el-table-column label="配送时间" prop="time"></el-table-column>
             <el-table-column label="配送方式" prop="pname"></el-table-column>
-            <el-table-column label="物流公司" prop="freight_name"></el-table-column>
-            <el-table-column label="物流单号" prop="delivery_code"></el-table-column>
+            <el-table-column
+              label="物流公司"
+              prop="freight_name"
+            ></el-table-column>
+            <el-table-column
+              label="物流单号"
+              prop="delivery_code"
+            ></el-table-column>
             <el-table-column label="收件人" prop="name"></el-table-column>
             <el-table-column label="备注" prop="note"></el-table-column>
           </el-table>
@@ -497,7 +514,8 @@ export default {
           real_total: (Number(c.real_price) * Number(c.goods_nums)).toFixed(2)
         })
       })
-      res.invoice_info = res.invoice === '1' ? JSON.parse(res.invoice_info) : {}
+      res.invoice_info =
+        res.invoice === '1' ? JSON.parse(res.invoice_info) : {}
       this.logList = res2
       this.deList = res1
       this.pageLoading = false

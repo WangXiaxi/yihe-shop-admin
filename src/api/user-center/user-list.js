@@ -65,3 +65,11 @@ export function reportSystemUserList(params) {
     params
   })
 }
+
+export function updateUserBalance(data) {
+  return request({
+    url: '/service/updateUserBalance',
+    method: 'post',
+    data
+  })
+}

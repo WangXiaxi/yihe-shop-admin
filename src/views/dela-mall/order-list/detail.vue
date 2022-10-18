@@ -71,7 +71,11 @@
                 </div>
               </template>
             </el-table-column>
-
+            <el-table-column label="规格" min-width="150px">
+              <template slot-scope="{ row }">
+                {{ row.value }}
+              </template>
+            </el-table-column>
             <el-table-column
               label="商品原价"
               prop="goods_price"
