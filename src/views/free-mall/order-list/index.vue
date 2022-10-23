@@ -210,6 +210,7 @@
           tooltip-effect="dark"
           @selection-change="onRowSelected"
           v-loading="agLoading"
+          :row-class-name="rowClassName"
         >
           <el-table-column type="selection" width="35" fixed></el-table-column>
           <el-table-column
@@ -376,6 +377,11 @@ export default {
   created() {},
   mounted() {},
   methods: {
+  rowClassName(row) {
+      if (row.row.pay_text === '未付款') {
+        return 'row-gray'
+      }
+    },
     async handleExport() {
       const res = await reportSystemOrderList(this.copy)
       return res.data.map(c => {

@@ -178,6 +178,7 @@ export default {
         { name: 'username', text: '用户名', width: '100' },
         { name: 'balance', text: '当前预存款', width: '100' },
         { name: 'amount', text: '申请提现金额', width: '100' },
+        { name: 'final_amount', text: '应打款', width: '100' },
         { name: 'service_free', text: '服务费', width: '100' },
         { name: 'time', text: '	申请时间', width: '100' },
         { name: 'name', text: '收款人姓名', width: '100' },
