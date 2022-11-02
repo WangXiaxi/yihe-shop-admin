@@ -308,6 +308,17 @@ export default {
             noCache: false,
             link: null
           }
+        },
+        {
+          name: 'SysManageActive',
+          path: 'active-list',
+          hidden: false,
+          component: 'sys-manage/active-list/index',
+          meta: {
+            title: '活动商品',
+            noCache: false,
+            link: null
+          }
         }
       ]
     },
